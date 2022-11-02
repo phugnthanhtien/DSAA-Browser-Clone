@@ -9,10 +9,6 @@ struct listUrl {
     Node *Head = createNode("myhomepage.com");
     Node *Tail = null;
 }
-struct listBookMark {
-    Node *Head ; // khoi tao home page
-    Node *Tail;
-}
 
 Node *createNode(string url) {
     Node * p  = new Node;
@@ -21,12 +17,20 @@ Node *createNode(string url) {
     p->next = NULL;
 }
 
-void clearHistory() {
-    void xemLichSu();
+void inittializeListUrl(listUrl listUrl, filename) {
+    //doc tung dong
+    createNode();
+    addTail(listUrl listUrl, Node *add);
 }
+
+void ghiFile(string fileName, listUrl listCanGhi)
+
 int main() {
     listUrl listUrl;
+    listUrl bookMark;
     //tao home page
+
+    //
     header(listUrl.head, listUrl.head);
     homePage();
 }
@@ -43,7 +47,7 @@ void header(Node*Head, Node *path) {
     Node *home = Head;
     string url = path->url;
     string search = "Nhap URL";
-    book isbookMark = false;
+    bool isbookMark = false;
     string option = "Tuy chon khac";
 
     //click next || prev || home -> veTrinhDuyet();
@@ -54,4 +58,41 @@ void header(Node*Head, Node *path) {
         veTrinhDuyet(currentURL);
     }
 
+    //click option
+    // 1. List History
+    // 2. List book Mark
+
+    listLichSu(listUrl listUrl);
+
+}
+
+void listLichSu(listUrl) {
+    // loop element in listUrl
+    veLichSu(element);
+
+    clearAll(); // mo rong
+}
+
+void listBookMark(listBookMark) {
+    // loop element in listBookMark
+    veLichSuBookMark(element);
+    
+    clearAll(); // mo rong
+}
+
+void veLichSu(Node *lichSu) {
+    string url = lichSu.url;
+    string xoa = "Delete";
+
+    //click Xoa
+    xoaNode(listUrl listUrl, Node *lichSu);
+    if(lichSu.bookMark) xoaNode(listUrl listBookMark, Node *lichSu);
+}
+
+void veLichSuBookMark(Node *lichSu) {
+    string url = lichSu.url;
+    string xoa = "Delete";
+
+    //click Xoa
+    xoaNode(listUrl listBookMark, Node *lichSu);
 }
