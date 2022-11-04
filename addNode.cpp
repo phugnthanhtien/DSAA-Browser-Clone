@@ -16,9 +16,14 @@ struct listUrl
 bool Empty(listUrl L);
 Node *createNode(string url);
 void AddTail(listUrl &L, Node*p );
+void inList(listUrl &L);
 int main()
 {
-	
+	listUrl list;
+	inList(list);
+	AddTail(list, createNode("gg.com"));
+	cout << list.Head->url;
+	return 0;
 }
 Node *createNode(string url) {
     Node * p  = new Node;
@@ -38,7 +43,10 @@ bool Empty(listUrl L)
 		return 1;
 	return 0;
 }
-
+void inList(listUrl &L)
+{
+	L.Head = L.Tail = NULL;
+}
 void AddTail(listUrl &L, Node*p )
 {
 	if (Empty(L))
