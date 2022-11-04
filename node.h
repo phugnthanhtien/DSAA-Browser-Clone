@@ -1,4 +1,6 @@
+#pragma once
 #include <iostream>
+
 using namespace std;
 
 struct Node {
@@ -13,10 +15,11 @@ struct listUrl {
 
 Node *createNode(string data, int x, int y, int w, int h);
 void createList(listUrl &list);
-void addTail(listUrl &list, Node* node);
 void browseNext(listUrl list);
 void removeList(listUrl &list);
 void removeNode(listUrl &list, Node *x);
+bool isEmpty(listUrl list);
+void addTail(listUrl &list, Node*p);
 
 Node *createNode(string data, int x, int y, int w, int h) {
     Node *p = new Node;
@@ -37,23 +40,13 @@ void createList(listUrl &list) {
     list.head = list.tail = NULL;
 }
 
-void addTail(listUrl &list, Node* node) {
-   if (!list.head)
-      list.head = list.tail = node;
-   else {
-      node->prev = list.tail;
-      list.tail->next = node;
-      list.tail = node;
-   }
-}
-
 void browseNext(listUrl list) {
    for (Node*i = list.head; i; i = i->next) {
       cout << i->url << endl;
    }
 }
 
-void removeList(listUrl &list) { // clear web browser
+void removeList(listUrl &list) { 
     Node *k;
     while (list.head) {
         k = list.head;
@@ -77,3 +70,23 @@ void removeNode(listUrl &list, Node *x) {
         delete x;
     }
 }
+
+bool isEmpty(listUrl list)
+{
+	if(list.head == NULL)
+		return 1;
+	return 0;
+}
+
+void addTail(listUrl &list, Node*p )
+{
+	if (isEmpty(list))
+		list.head =  list.tail = p;
+	else
+	{
+		list.tail->next = p;
+		p->prev = list.tail;
+		list.tail = p;
+	}
+}
+

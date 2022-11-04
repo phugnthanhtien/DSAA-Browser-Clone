@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include "mylib.h"
-#include  "deletenode.h"
+#include  "node.h"
 #define MAX 100
 #define outlinecolor 11
 
