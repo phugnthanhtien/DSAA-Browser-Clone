@@ -178,6 +178,7 @@ void Header() {
 
 void box(Node *header, int b_color, int t_color, bool isCenter)
 {
+	// set background
 	textcolor(b_color);
 	for (int iy = header->y + 1; iy <= header->y + header->h - 1; iy++)
 	{
@@ -187,6 +188,8 @@ void box(Node *header, int b_color, int t_color, bool isCenter)
 			cout << " ";
 		}
 	}
+
+	// kiểm tra xem có muốn để chữ ở giữa khung không
 	if (isCenter)
 	{
 		int position = header->w / 2 + header->x - header->url.length() / 2;
@@ -201,11 +204,16 @@ void box(Node *header, int b_color, int t_color, bool isCenter)
 		cout << header->url;
 	}
 
-	textcolor(1);
+	textcolor(1); // bỏ tô màu viền
+	
+	// tô màu khung
 	SetColor(outlinecolor);
+
+	// nếu chiều rộng hoặc chiều dài ko tồn tại -> ko vẽ
 	if (header->w < 1 || header->h < 1)
 		return;
 
+	// vẽ khung
 	for (int i = header->x; i < header->x + header->w; i++)
 	{
 		gotoXY(i, header->y);
@@ -233,6 +241,8 @@ void box(Node *header, int b_color, int t_color, bool isCenter)
 // done
 void moveHeader() {
 	ShowCur(0);
+	// chuyển thành danh sách vòng để khi người dùng di chuyển con trỏ
+	// tới cuối sẽ đi trở về đầu hoặc ngược lại
 	listHeader.tail->next = listHeader.head;
 	listHeader.head->prev = listHeader.tail;
 
@@ -242,6 +252,7 @@ void moveHeader() {
 	while(true) {
 		if(_kbhit()) {
 			char c = _getch();
+			// kiểm tra xem người dùng nhấn phím mũi tên
 			if(c == -32) {
 				c = _getch();
 				if(c == 77){
@@ -262,7 +273,9 @@ void moveHeader() {
 	listHeader.head->prev = NULL;
 }
 
-// not done
+// done
+// làm giống header 
+// hàm này dùng chung cho listLS vàlistBookMark
 void n_box(listUrl list, int b_color, int t_color, bool isCenter)
 {
 	Node * accumulator = list.head;
