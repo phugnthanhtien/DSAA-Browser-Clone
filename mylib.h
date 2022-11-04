@@ -1,8 +1,8 @@
-#pragma once // tránh d?ng d? thu vi?n khi g?i ch?ng file lên nhau
+#pragma once // trï¿½nh d?ng d? thu vi?n khi g?i ch?ng file lï¿½n nhau
 #include <stdio.h>
 #include <conio.h>
 #include<ctime> /* thu vi?n h? tr? v? th?i gian th?c */
-#include "windows.h" // thu vi?n này bá d?o l?m nhé - ch?a nhi?u d? choi nek - c? tìm hi?u d?n d?n s
+#include "windows.h" // thu vi?n nï¿½y bï¿½ d?o l?m nhï¿½ - ch?a nhi?u d? choi nek - c? tï¿½m hi?u d?n d?n s
 //======= l?y t?a d? x c?a con tr? hi?n t?i =============
 #define KEY_NONE	-1
 int whereX()
@@ -20,7 +20,7 @@ int whereY()
 		return csbi.dwCursorPosition.Y;
 	return -1;
 }
-//============== d?ch con tr? hi?n t?i d?n di?m có t?a d? (x,y) ==========
+//============== d?ch con tr? hi?n t?i d?n di?m cï¿½ t?a d? (x,y) ==========
 void gotoXY(int x, int y)
 {
 	HANDLE hConsoleOutput;
@@ -28,7 +28,7 @@ void gotoXY(int x, int y)
 	hConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleCursorPosition(hConsoleOutput, Cursor_an_Pos);
 }
-//============= d?t màu cho ch? =========
+//============= d?t mï¿½u cho ch? =========
 void SetColor(WORD color)
 {
 	HANDLE hConsoleOutput;
@@ -44,14 +44,14 @@ void SetColor(WORD color)
 
 	SetConsoleTextAttribute(hConsoleOutput, wAttributes);
 }
-//============== làm an? tro? chuot ===========
+//============== lï¿½m an? tro? chuot ===========
 void ShowCur(bool CursorVisibility)
 {
 	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
 	CONSOLE_CURSOR_INFO cursor = { 1, CursorVisibility };
 	SetConsoleCursorInfo(handle, &cursor);
 }
-//======= tr? v? mã phím ngu?i dùng b?m =========
+//======= tr? v? mï¿½ phï¿½m ngu?i dï¿½ng b?m =========
 int inputKey()
 {
 	if (_kbhit()) //true
@@ -77,4 +77,12 @@ void textcolor(int x)
 	HANDLE mau;
 	mau = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(mau, x);
+}
+
+void set_console_size(int x, int y)
+{
+	HWND console = GetConsoleWindow();
+	RECT r;
+	GetWindowRect(console, &r);
+	MoveWindow(console, r.left, r.top, x, y, TRUE);
 }
