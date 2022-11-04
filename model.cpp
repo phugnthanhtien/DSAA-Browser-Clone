@@ -1,6 +1,7 @@
 // tim hieu cach bam qua lai 
 struct Node {
     string url;
+    int x, y, w, h;
     Node*next;
     Node *prev;
 }
