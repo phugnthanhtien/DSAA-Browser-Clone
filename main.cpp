@@ -25,7 +25,7 @@ listUrl listLS;
 // ESC: 27 
 
 void box(Node *header, int b_color, int t_color, bool isCenter);
-void n_box(int x, int y, int width, int height, int b_color, int t_color, string text, bool isCenter, int sl);
+void n_box(listUrl list, int b_color, int t_color, bool isCenter);
 void highline(Node *accumulator, int b_color, int t_color, bool isCenter);
 void movePointer(int start_x, int start_y, int width, int height, bool isCenter);
 void moveHeader();
@@ -51,8 +51,15 @@ int main()
 
 void LichSu() {
 	Node *accumulator = listLS.head;
+	int i = 0;
 	while(accumulator != NULL) {
 		box(accumulator, 1, textColor, false);
+		if (i != 0)
+		{
+			gotoXY(accumulator->x, accumulator->y);cout << char(195);
+			gotoXY(accumulator->x +accumulator-> w, accumulator->y);cout << char(180);
+		}
+		i++;
 		accumulator = accumulator->next;
 	}	
 }
@@ -63,20 +70,19 @@ void veLichSu()
 	// lichsu
 	int xLichSu = 1;
 	int yLichSu = 6;
-	int widthLichSu = 100;
+	int widthLichSu = 110;
 	int heightLichSu = 2;
 	bool isCenterLichSu = false;
-	int sl = 5;	
 
 	listLichSu();
-	LichSu();
-	// n_box(listLS, bgColor, textColor, false);
+	// LichSu();
+	n_box(listLS, bgColor, textColor, false);
 
 	int start_x = xLichSu, start_y = yLichSu;
 	int width = widthLichSu, height = heightLichSu;
 	bool isCenter = isCenterLichSu;
 
-//	movePointer(start_x, start_y, width, height, isCenter);
+//	movePointer(start_x, start_y, width, height, isCenterLichSu);
 }
 
 // not done
@@ -137,7 +143,7 @@ void listLichSu()
 	ShowCur(0);
 	int start_x = 1;
 	int start_y = 6;
-	int width = 100;
+	int width = 101;
 	int height = 2;
 	bool isCenter = false;
 	int sl = 5;
@@ -284,18 +290,17 @@ void moveHeader() {
 // hàm này dùng chung cho listLS vàlistBookMark
 void n_box(listUrl list, int b_color, int t_color, bool isCenter)
 {
-	Node * accumulator = list.head;
+	Node *accumulator = listLS.head;
 	int i = 0;
-	while(accumulator != NULL)
-	{
-		box(accumulator, 1, t_color, false);
+	while(accumulator != NULL) {
+		box(accumulator, 1, textColor, false);
 		if (i != 0)
 		{
-			gotoXY(accumulator->x, accumulator->y + (i * 2));
-			cout << char(195);
-			gotoXY(accumulator->x + accumulator->w, accumulator->y + (i * 2));
-			cout << char(180);
+			gotoXY(accumulator->x, accumulator->y);cout << char(195);
+			gotoXY(accumulator->x +accumulator-> w, accumulator->y);cout << char(180);
 		}
+		i++;
+		accumulator = accumulator->next;
 	}
 }
 

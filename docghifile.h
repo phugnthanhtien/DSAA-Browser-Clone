@@ -21,7 +21,7 @@ void docFile(listUrl &list, string fileName, int x, int y, int w, int h) {
     string temp;
     int i = 0;
     while (infile >> temp) {
-        Node *p = createNode(temp, 1, 6 + (i * 2), w, h);
+        Node *p = createNode(temp, x, y + (i * 2), w, h);
         addTail(list, p);
         i++;
     }
