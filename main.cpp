@@ -12,7 +12,6 @@ using namespace std;
 int positionX[6];
 int textColor = 15;
 int bgColor = 200;
-string mainUrl = "myhomepage.com";
 listUrl listHeader;
 listUrl listLS;
 Node *currentUrl;
@@ -43,7 +42,6 @@ int main()
 	set_console_size(1000, 600);
 	initLichSu(); // doc file -> khoi tao listLS
 	initHeader();
-
 
 	Header(currentUrl);
 	// moveHeader();
@@ -151,7 +149,7 @@ void initHeader()
 	addTail(listHeader, createNode("<", positionX[0], start_y, widthElement[0], height));
 	addTail(listHeader, createNode(">", positionX[1], start_y, widthElement[1], height));
 	addTail(listHeader, createNode("Home", positionX[2], start_y, widthElement[2], height));
-	addTail(listHeader, createNode(mainUrl, positionX[3], start_y, widthElement[3], height));
+	addTail(listHeader, createNode(listLS.head->url, positionX[3], start_y, widthElement[3], height));
 	addTail(listHeader, createNode("Search", positionX[4], start_y, widthElement[4], height));
 	addTail(listHeader, createNode("Option", positionX[5], start_y, widthElement[5], height));
 }
@@ -159,7 +157,7 @@ void initHeader()
 void Header(Node *currentUrl) {
 	Node *accumulator = listHeader.head;
 	while(accumulator != NULL) {
-		if(accumulator->x == positionX[3] && accumulator->url != mainUrl){
+		if(accumulator->x == positionX[3]){
 			accumulator->url = currentUrl->url;
 		}
 		box(accumulator, 1, textColor, true);
@@ -266,7 +264,7 @@ void moveHeader() {
 // hàm này dùng chung cho listLS và listBookMark
 void n_box(listUrl list, int b_color, int t_color, bool isCenter)
 {
-	Node *accumulator = listLS.head;
+	Node *accumulator = list.head;
 	int i = 0;
 	while(accumulator != NULL) {
 		box(accumulator, 1, textColor, false);
