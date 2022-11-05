@@ -13,6 +13,7 @@ int positionX[6];
 int textColor = 15;
 int bgColor = 200;
 listUrl listHeader;
+listUrl listLS;
 
 //ASCII arrow
 // up: 72
@@ -31,6 +32,7 @@ void moveHeader();
 void initHeader();
 void listLichSu();
 void veLichSu();
+void LichSu();
 void Header();
 
 int main()
@@ -39,21 +41,24 @@ int main()
 	
 	initHeader();
 	Header();
-	moveHeader();
-	//  veLichSu();
+	// moveHeader();
+
+	veLichSu();
 
 	 _getch();
 	return 0;
 }
 
+void LichSu() {
+	Node *accumulator = listLS.head;
+	while(accumulator != NULL) {
+		box(accumulator, 1, textColor, false);
+		accumulator = accumulator->next;
+	}	
+}
 //not done
 void veLichSu()
 {
-	// header
-	int xHeader = 1;
-	int yHeader = 1;
-	int heightHeader = 2;
-	bool isCenterHeader = true;
 
 	// lichsu
 	int xLichSu = 1;
@@ -61,13 +66,11 @@ void veLichSu()
 	int widthLichSu = 100;
 	int heightLichSu = 2;
 	bool isCenterLichSu = false;
-	int sl = 5;
+	int sl = 5;	
 
-
-
-	initHeader();
-	Header();
 	listLichSu();
+	LichSu();
+	// n_box(listLS, bgColor, textColor, false);
 
 	int start_x = xLichSu, start_y = yLichSu;
 	int width = widthLichSu, height = heightLichSu;
@@ -131,6 +134,7 @@ void veLichSu()
 //not done
 void listLichSu()
 {
+	ShowCur(0);
 	int start_x = 1;
 	int start_y = 6;
 	int width = 100;
@@ -138,7 +142,8 @@ void listLichSu()
 	bool isCenter = false;
 	int sl = 5;
 
-//	n_box(start_x, start_y, width, height, 1, textColor, "Lich Su", isCenter, sl);
+	docFile(listLS, "url.txt", start_x, start_y, width, height);   //note
+	//n_box(start_x, start_y, width, height, 1, textColor, "Lich Su", isCenter, sl);
 //	highline(start_x, start_y, width, height, bgColor, textColor, "Lich Su", isCenter);
 }
 
