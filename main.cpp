@@ -2,6 +2,7 @@
 #include <string>
 #include "mylib.h"
 #include  "node.h"
+#include "docghifile.h"
 #define MAX 100
 #define outlinecolor 11
 
