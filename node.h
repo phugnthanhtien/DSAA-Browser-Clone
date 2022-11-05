@@ -13,14 +13,6 @@ struct listUrl {
     Node *head, *tail;
 };
 
-Node *createNode(string data, int x, int y, int w, int h);
-void createList(listUrl &list);
-void browseNext(listUrl list);
-void removeList(listUrl &list);
-void removeNode(listUrl &list, Node *x);
-bool isEmpty(listUrl list);
-void addTail(listUrl &list, Node*p);
-
 Node *createNode(string data, int x, int y, int w, int h) {
     Node *p = new Node;
     if (p == NULL)
