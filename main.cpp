@@ -13,6 +13,7 @@ int positionX[6];
 int textColor = 15;
 int bgColor = 200;
 listUrl listHeader;
+listUrl listLS;
 
 //ASCII arrow
 // up: 72
@@ -24,13 +25,14 @@ listUrl listHeader;
 // ESC: 27 
 
 void box(Node *header, int b_color, int t_color, bool isCenter);
-void n_box(int x, int y, int width, int height, int b_color, int t_color, string text, bool isCenter, int sl);
+void n_box(listUrl list, int b_color, int t_color, bool isCenter);
 void highline(Node *accumulator, int b_color, int t_color, bool isCenter);
 void movePointer(int start_x, int start_y, int width, int height, bool isCenter);
 void moveHeader();
 void initHeader();
 void listLichSu();
 void veLichSu();
+void LichSu();
 void Header();
 
 int main()
@@ -39,106 +41,96 @@ int main()
 	
 	initHeader();
 	Header();
-	moveHeader();
-	//  veLichSu();
+	// moveHeader();
+
+	veLichSu();
 
 	 _getch();
 	return 0;
 }
 
+void LichSu() {
+	Node *accumulator = listLS.head;
+	int i = 0;
+	while(accumulator != NULL) {
+		box(accumulator, 1, textColor, false);
+		if (i != 0)
+		{
+			gotoXY(accumulator->x, accumulator->y);cout << char(195);
+			gotoXY(accumulator->x +accumulator-> w, accumulator->y);cout << char(180);
+		}
+		i++;
+		accumulator = accumulator->next;
+	}	
+}
 //not done
 void veLichSu()
 {
-	// header
-	int xHeader = 1;
-	int yHeader = 1;
-	int heightHeader = 2;
-	bool isCenterHeader = true;
 
 	// lichsu
 	int xLichSu = 1;
 	int yLichSu = 6;
-	int widthLichSu = 100;
+	int widthLichSu = 110;
 	int heightLichSu = 2;
 	bool isCenterLichSu = false;
-	int sl = 5;
 
-
-
-	initHeader();
-	Header();
 	listLichSu();
+	// LichSu();
+	n_box(listLS, bgColor, textColor, false);
 
 	int start_x = xLichSu, start_y = yLichSu;
 	int width = widthLichSu, height = heightLichSu;
 	bool isCenter = isCenterLichSu;
 
-//	movePointer(start_x, start_y, width, height, isCenter);
+	movePointer(start_x, start_y, width, height, isCenterLichSu);
 }
 
 // not done
-// void movePointer(int start_x, int start_y, int width, int height, bool isCenter)
-// {
-// 	ShowCur(0);
-// 	int sl = 5;
-// 	int xp = start_x;
-// 	int yp = start_y;
-// 	int xcu = xp;
-// 	int ycu = yp;
-// 	bool check = true;
-// 	while (true)
-// 	{
-// 		if (check == true)
-// 		{
-// 			gotoXY(xcu, ycu);
-// 			highline(xcu, ycu, width, height, 1, textColor, "Lich Su", isCenter); // rs thanh sang cu
-// 			xcu = xp;
-// 			ycu = yp;
-// 			highline(xp, yp, width, height, bgColor, textColor, "Lich Su", isCenter);
-// 			check = false;
-// 		}
-// 		if (_kbhit())
-// 		{
-// 			char c = _getch();
-// 			if (c == -32)
-// 			{
-// 				check = true; // flag
-// 				c = _getch();
-// 				if (c == 75)
-// 				{
-// 					if (yp != start_y)
-// 						yp -= 2;
-// 					else
-// 					{
-// 						yp = start_y + height * (sl - 1);
-// 					}
-// 				}
-// 				else if (c == 77)
-// 				{
-// 					if (yp != start_y + height * (sl - 1))
-// 						yp += 2;
-// 					else
-// 					{
-// 						yp = start_y;
-// 					}
-// 				}
-// 			}
-// 		}
-// 	}
-// }
+void movePointer(int start_x, int start_y, int width, int height, bool isCenter) {
+	ShowCur(0);
+	listLS.tail->next = listLS.head;
+	listLS.head->prev = listLS.tail;
+
+	Node *accumulator = listLS.head;
+	highline(accumulator, bgColor, textColor, true);
+
+	while(true) {
+		if(_kbhit()) {
+			char c = _getch();
+			if(c == -32) {
+				c = _getch();
+				if(c == 80){
+					highline(accumulator, 1, textColor, true);
+					accumulator = accumulator->next;
+					highline(accumulator, bgColor, textColor, true);
+
+				}
+				else if(c == 72) {
+					highline(accumulator, 1, textColor, true);
+					accumulator = accumulator->prev;
+					highline(accumulator, bgColor, textColor, true);
+				}
+			}
+		}
+	}
+	listLS.tail->next = NULL;
+	listLS.head->prev = NULL;
+}
 
 
 //not done
 void listLichSu()
 {
+	ShowCur(0);
 	int start_x = 1;
 	int start_y = 6;
-	int width = 100;
+	int width = 101;
 	int height = 2;
 	bool isCenter = false;
 	int sl = 5;
 
-//	n_box(start_x, start_y, width, height, 1, textColor, "Lich Su", isCenter, sl);
+	docFile(listLS, "url.txt", start_x, start_y, width, height);   //note
+	//n_box(start_x, start_y, width, height, 1, textColor, "Lich Su", isCenter, sl);
 //	highline(start_x, start_y, width, height, bgColor, textColor, "Lich Su", isCenter);
 }
 
@@ -279,18 +271,17 @@ void moveHeader() {
 // hàm này dùng chung cho listLS vàlistBookMark
 void n_box(listUrl list, int b_color, int t_color, bool isCenter)
 {
-	Node * accumulator = list.head;
+	Node *accumulator = listLS.head;
 	int i = 0;
-	while(accumulator != NULL)
-	{
-		box(accumulator, 1, t_color, false);
+	while(accumulator != NULL) {
+		box(accumulator, 1, textColor, false);
 		if (i != 0)
 		{
-			gotoXY(accumulator->x, accumulator->y + (i * 2));
-			cout << char(195);
-			gotoXY(accumulator->x + accumulator->w, accumulator->y + (i * 2));
-			cout << char(180);
+			gotoXY(accumulator->x, accumulator->y);cout << char(195);
+			gotoXY(accumulator->x +accumulator-> w, accumulator->y);cout << char(180);
 		}
+		i++;
+		accumulator = accumulator->next;
 	}
 }
 
