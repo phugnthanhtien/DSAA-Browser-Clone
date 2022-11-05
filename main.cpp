@@ -82,59 +82,40 @@ void veLichSu()
 	int width = widthLichSu, height = heightLichSu;
 	bool isCenter = isCenterLichSu;
 
-//	movePointer(start_x, start_y, width, height, isCenterLichSu);
+	movePointer(start_x, start_y, width, height, isCenterLichSu);
 }
 
 // not done
-// void movePointer(int start_x, int start_y, int width, int height, bool isCenter)
-// {
-// 	ShowCur(0);
-// 	int sl = 5;
-// 	int xp = start_x;
-// 	int yp = start_y;
-// 	int xcu = xp;
-// 	int ycu = yp;
-// 	bool check = true;
-// 	while (true)
-// 	{
-// 		if (check == true)
-// 		{
-// 			gotoXY(xcu, ycu);
-// 			highline(xcu, ycu, width, height, 1, textColor, "Lich Su", isCenter); // rs thanh sang cu
-// 			xcu = xp;
-// 			ycu = yp;
-// 			highline(xp, yp, width, height, bgColor, textColor, "Lich Su", isCenter);
-// 			check = false;
-// 		}
-// 		if (_kbhit())
-// 		{
-// 			char c = _getch();
-// 			if (c == -32)
-// 			{
-// 				check = true; // flag
-// 				c = _getch();
-// 				if (c == 75)
-// 				{
-// 					if (yp != start_y)
-// 						yp -= 2;
-// 					else
-// 					{
-// 						yp = start_y + height * (sl - 1);
-// 					}
-// 				}
-// 				else if (c == 77)
-// 				{
-// 					if (yp != start_y + height * (sl - 1))
-// 						yp += 2;
-// 					else
-// 					{
-// 						yp = start_y;
-// 					}
-// 				}
-// 			}
-// 		}
-// 	}
-// }
+void movePointer(int start_x, int start_y, int width, int height, bool isCenter) {
+	ShowCur(0);
+	listLS.tail->next = listLS.head;
+	listLS.head->prev = listLS.tail;
+
+	Node *accumulator = listLS.head;
+	highline(accumulator, bgColor, textColor, true);
+
+	while(true) {
+		if(_kbhit()) {
+			char c = _getch();
+			if(c == -32) {
+				c = _getch();
+				if(c == 80){
+					highline(accumulator, 1, textColor, true);
+					accumulator = accumulator->next;
+					highline(accumulator, bgColor, textColor, true);
+
+				}
+				else if(c == 72) {
+					highline(accumulator, 1, textColor, true);
+					accumulator = accumulator->prev;
+					highline(accumulator, bgColor, textColor, true);
+				}
+			}
+		}
+	}
+	listLS.tail->next = NULL;
+	listLS.head->prev = NULL;
+}
 
 
 //not done
