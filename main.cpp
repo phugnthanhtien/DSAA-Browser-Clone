@@ -14,7 +14,9 @@ int textColor = 15;
 int bgColor = 200;
 listUrl listHeader;
 listUrl listLS;
+listUrl listBookMark;
 Node *currentUrl;
+Node *currentBookMark;
 
 //ASCII arrow
 // up: 72
@@ -32,23 +34,23 @@ void movePointer(listUrl list, bool isCenter);
 void moveHeader();
 void initHeader();
 void initLichSu();
+void initBookMark();
 void veLichSu();
 void LichSu();
 void Header(Node *currentUrl);
 
 int main()
 {
-	// khoi tao duy nhat 1 lan
+// khoi tao duy nhat 1 lan
 	set_console_size(1000, 600);
-	initLichSu(); // doc file -> khoi tao listLS
+//	initLichSu(); // doc file -> khoi tao listLS
+	initBookMark();
 	initHeader();
-
-	Header(currentUrl);
-	// moveHeader();
-
-
-	n_box(listLS, bgColor, textColor, false);
-	movePointer(listLS, false);
+	Header(currentBookMark);
+//	moveHeader();
+	
+	n_box(listBookMark, bgColor, textColor, false);
+	movePointer(listBookMark, false);
 
 	 _getch();
 	return 0;
@@ -129,6 +131,17 @@ void initLichSu()
 	currentUrl = listLS.head;
 }
 
+void initBookMark()
+{
+	ShowCur(0);
+	int start_x = 1;
+	int start_y = 6;
+	int width = 101;
+	int height = 2;
+
+	docFile(listBookMark, "bookMark.txt", start_x, start_y, width, height);
+	currentBookMark = listBookMark.head;
+}
 void initHeader()
 {
 	ShowCur(0);
@@ -149,7 +162,7 @@ void initHeader()
 	addTail(listHeader, createNode("<", positionX[0], start_y, widthElement[0], height));
 	addTail(listHeader, createNode(">", positionX[1], start_y, widthElement[1], height));
 	addTail(listHeader, createNode("Home", positionX[2], start_y, widthElement[2], height));
-	addTail(listHeader, createNode(listLS.head->url, positionX[3], start_y, widthElement[3], height));
+	addTail(listHeader, createNode(listBookMark.head->url, positionX[3], start_y, widthElement[3], height));
 	addTail(listHeader, createNode("Search", positionX[4], start_y, widthElement[4], height));
 	addTail(listHeader, createNode("Option", positionX[5], start_y, widthElement[5], height));
 }
