@@ -16,7 +16,7 @@ listUrl listHeader;
 listUrl listLS;
 listUrl listBookMark;
 Node *currentUrl;
-Node *currentBookMark;
+//Node *currentBookMark;
 
 //ASCII arrow
 // up: 72
@@ -43,10 +43,10 @@ int main()
 {
 // khoi tao duy nhat 1 lan
 	set_console_size(1000, 600);
-//	initLichSu(); // doc file -> khoi tao listLS
+	initLichSu(); // doc file -> khoi tao listLS
 	initBookMark();
 	initHeader();
-	Header(currentBookMark);
+	Header(currentUrl);
 //	moveHeader();
 	
 	n_box(listBookMark, bgColor, textColor, false);
@@ -140,7 +140,7 @@ void initBookMark()
 	int height = 2;
 
 	docFile(listBookMark, "bookMark.txt", start_x, start_y, width, height);
-	currentBookMark = listBookMark.head;
+//	currentBookMark = listBookMark.head;
 }
 void initHeader()
 {
