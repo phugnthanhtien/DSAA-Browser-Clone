@@ -48,9 +48,12 @@ int main()
 	initBookMark();
 	initHeader();
 	Header(currentUrl);
-//	moveHeader();
+	
 	
 	ascii_art(currentUrl->url, 30, 10, 12);
+	moveHeader();
+	
+	
 	// n_box(listBookMark, bgColor, textColor, false);
 	// movePointer(listBookMark, false);
 
@@ -274,6 +277,7 @@ void moveHeader() {
 	}
 	listHeader.tail->next = NULL;
 	listHeader.head->prev = NULL;
+	
 }
 
 // hàm này dùng chung cho listLS và listBookMark
@@ -317,4 +321,6 @@ void highline(Node *accumulator, int b_color, int t_color, bool isCenter)
 		SetColor(t_color);
 		cout << accumulator->url;
 	}
+	textcolor(0);
+	ShowCur(0);
 }
