@@ -1,18 +1,21 @@
+#pragma once
 #include <iostream>
 #include <string>
 #include <conio.h>
 #include <windows.h>
 #include <iomanip>
+#include "mylib.h"
 using namespace std;
 
-void ascii_art(string input)
+void ascii_art(string input, int x, int y, int t_color)
 {
 //	set_console_size();
+	textcolor(t_color);
     //first layer
     for (int i=0; i < input.size(); i++)
     {
     	if (input[i] == '.') break;
-    	if (i == 0) cout << right << setw(35);
+    	if (i == 0) gotoXY(x, ++y);
         if (input[i] == 'A' || input[i]== 'a')
             cout<<"  ___   ";
         if (input[i] == 'B' || input[i] == 'b')
@@ -155,7 +158,7 @@ void ascii_art(string input)
     for (int i=0; i < input.size(); i++)
     {
     	if (input[i] == '.') break;
-    	if (i == 0) cout << right << setw(35);
+    	if (i == 0) gotoXY(x, ++y);
         if (input[i] == 'A' || input[i]== 'a')
             cout<<" / _ \\  ";
         if (input[i] == 'B' || input[i] == 'b')
@@ -298,7 +301,7 @@ void ascii_art(string input)
     for (int i=0; i < input.size(); i++)
     {
     	if (input[i] == '.') break;
-    	if (i == 0) cout << right << setw(35);
+    	if (i == 0) gotoXY(x, ++y);
         if (input[i] == 'A' || input[i]== 'a')
             cout<<"/ /_\\ \\ ";
         if (input[i] == 'B' || input[i] == 'b')
@@ -441,7 +444,7 @@ void ascii_art(string input)
     for (int i=0; i < input.size(); i++)
     {
     	if (input[i] == '.') break;
-    	if (i == 0) cout << right << setw(35);
+    	if (i == 0) gotoXY(x, ++y);
         if (input[i] == 'A' || input[i]== 'a')
             cout<<"|  _  | ";
         if (input[i] == 'B' || input[i] == 'b')
@@ -584,7 +587,7 @@ void ascii_art(string input)
     for (int i=0; i < input.size(); i++)
     {
     	if (input[i] == '.') break;
-    	if (i == 0) cout << right << setw(35);
+    	if (i == 0) gotoXY(x, ++y);
         if (input[i] == 'A' || input[i]== 'a')
             cout<<"| | | | ";
         if (input[i] == 'B' || input[i] == 'b')
@@ -727,7 +730,7 @@ void ascii_art(string input)
     for (int i=0; i < input.size(); i++)
     {
     	if (input[i] == '.') break;
-    	if (i == 0) cout << right << setw(35);
+    	if (i == 0) gotoXY(x, ++y);
         if (input[i] == 'A' || input[i]== 'a')
             cout<<"\\_| |_/ ";
         if (input[i] == 'B' || input[i] == 'b')
@@ -866,11 +869,4 @@ void ascii_art(string input)
             cout<<" (_)   ";
     }
     cout<<endl;
-}
-
-int main()
-{
-    ascii_art("youtube.vn");
-    _getch();
-    return 0;
 }

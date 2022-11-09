@@ -3,6 +3,7 @@
 #include "mylib.h"
 #include  "node.h"
 #include "docghifile.h"
+#include "content.h"
 #define MAX 100
 #define outlinecolor 11
 
@@ -49,8 +50,9 @@ int main()
 	Header(currentUrl);
 //	moveHeader();
 	
-	n_box(listBookMark, bgColor, textColor, false);
-	movePointer(listBookMark, false);
+	ascii_art(currentUrl->url, 30, 10, 12);
+	// n_box(listBookMark, bgColor, textColor, false);
+	// movePointer(listBookMark, false);
 
 	 _getch();
 	return 0;
