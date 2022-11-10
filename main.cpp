@@ -17,6 +17,11 @@ listUrl listHeader;
 listUrl listLS;
 listUrl listBookMark;
 Node *currentUrl;
+
+int xT = 30;
+int yT = 10;
+int t_color = 12;
+
 //Node *currentBookMark;
 
 //ASCII arrow
@@ -39,6 +44,7 @@ void initBookMark();
 void veLichSu();
 void LichSu();
 void Header(Node *currentUrl);
+void drawBrowser();
 
 int main()
 {
@@ -47,18 +53,18 @@ int main()
 	initLichSu(); // doc file -> khoi tao listLS
 	initBookMark();
 	initHeader();
-	Header(currentUrl);
-	
-	
-	ascii_art(currentUrl->url, 30, 10, 12);
-	moveHeader();
-	
-	
-	// n_box(listBookMark, bgColor, textColor, false);
-	// movePointer(listBookMark, false);
 
+	n_box(listLS, bgColor, textColor, false);
+	drawBrowser();
+	// movePointer(listBookMark, false);
 	 _getch();
 	return 0;
+}
+
+void drawBrowser() {
+	Header(currentUrl);
+	// ascii_art(currentUrl->url, xT, yT, t_color);	
+	moveHeader();
 }
 
 void LichSu() {
@@ -131,9 +137,8 @@ void initLichSu()
 	int start_y = 6;
 	int width = 101;
 	int height = 2;
-
 	docFile(listLS, "url.txt", start_x, start_y, width, height);
-	currentUrl = listLS.head;
+	currentUrl = listLS.tail;
 }
 
 void initBookMark()
@@ -249,8 +254,8 @@ void moveHeader() {
 	ShowCur(0);
 	// chuyển thành danh sách vòng để khi người dùng di chuyển con trỏ
 	// tới cuối sẽ đi trở về đầu hoặc ngược lại
-	listHeader.tail->next = listHeader.head;
-	listHeader.head->prev = listHeader.tail;
+	 listHeader.tail->next = listHeader.head;
+	 listHeader.head->prev = listHeader.tail;
 
 	Node *accumulator = listHeader.head;
 	highline(accumulator, bgColor, textColor, true);
@@ -265,7 +270,6 @@ void moveHeader() {
 					highline(accumulator, 1, textColor, true);
 					accumulator = accumulator->next;
 					highline(accumulator, bgColor, textColor, true);
-
 				}
 				else if(c == 75) {
 					highline(accumulator, 1, textColor, true);
@@ -273,11 +277,29 @@ void moveHeader() {
 					highline(accumulator, bgColor, textColor, true);
 				}
 			}
+
+			else if (c == 13) {
+				listHeader.tail->next = NULL;
+				listHeader.head->prev = NULL;
+				if (accumulator->url == "<") {
+					if (currentUrl != listLS.head) {
+						currentUrl = currentUrl->prev;
+					}
+				}
+				else if (accumulator->url == ">") {
+					if (currentUrl != listLS.tail) {
+						currentUrl = currentUrl->next;
+					}
+				}
+				else if (accumulator->url == "Home" && currentUrl->url != "myhomepage.com") {
+					addTail(listLS, createNode("myhomepage.com", 0, 0, 0, 0));
+					currentUrl = currentUrl->next;
+					ghiUrl("url.txt", currentUrl->url);
+				}
+				drawBrowser();
+			}
 		}
 	}
-	listHeader.tail->next = NULL;
-	listHeader.head->prev = NULL;
-	
 }
 
 // hàm này dùng chung cho listLS và listBookMark
