@@ -13,10 +13,13 @@ using namespace std;
 int positionX[6];
 int textColor = 15;
 int bgColor = 200;
+string homeName = "myhomepage.com";
 listUrl listHeader;
 listUrl listLS;
 listUrl listBookMark;
+listUrl listSearch;
 Node *currentUrl;
+Node *currentHeader;
 
 int xT = 30;
 int yT = 10;
@@ -33,6 +36,7 @@ int t_color = 12;
 // enter: 13
 // ESC: 27 
 
+void initVariable();
 void box(Node *header, int b_color, int t_color, bool isCenter);
 void n_box(listUrl list, int b_color, int t_color, bool isCenter);
 void highline(Node *accumulator, int b_color, int t_color, bool isCenter);
@@ -45,26 +49,63 @@ void veLichSu();
 void LichSu();
 void Header(Node *currentUrl);
 void drawBrowser();
+void createSearchBar();
 
 int main()
 {
 // khoi tao duy nhat 1 lan
-	set_console_size(1000, 600);
-	initLichSu(); // doc file -> khoi tao listLS
-	initBookMark();
+	set_console_size(1200, 600);
+	initVariable();
 	initHeader();
 
-	n_box(listLS, bgColor, textColor, false);
 	drawBrowser();
-	// movePointer(listBookMark, false);
 	 _getch();
 	return 0;
 }
 
+void initVariable() {
+	createList(listSearch);
+	currentUrl = createNode(homeName);
+	addTail(listSearch, currentUrl);
+}
+
 void drawBrowser() {
+	system("cls");
 	Header(currentUrl);
-	// ascii_art(currentUrl->url, xT, yT, t_color);	
-	moveHeader();
+	ascii_art(currentUrl->url, xT, yT, t_color);	
+	if(currentUrl->url == homeName) {
+		createSearchBar();
+	}
+	else {
+		moveHeader();
+	}
+}
+
+void createSearchBar() {
+	box(createNode("", 30, 19, 70, 2), 0, 3, false);
+	gotoXY(31, 20);
+	ShowCur(1);
+	string search;
+	while(true) {
+		if(_kbhit()) {
+			char c = _getch();
+			if(c == -32) {
+				c = _getch();
+				if(c == 72) {
+					moveHeader();
+				}
+			}
+			else {
+				textcolor(15);
+				getline(cin, search);
+				if(search != "") {
+					addTail(listSearch, createNode(search));
+					currentUrl = currentUrl->next;
+					drawBrowser();
+				}
+			}
+		}
+	}
 }
 
 void LichSu() {
@@ -95,7 +136,6 @@ void LichSu() {
 // 	movePointer(listLS, isCenterLichSu);
 // }
 
-// hàm này dùng chung cho listLS và listBookMark
 void movePointer(listUrl list, bool isCenter) {
 	ShowCur(0);
 	list.tail->next = list.head;
@@ -150,7 +190,6 @@ void initBookMark()
 	int height = 2;
 
 	docFile(listBookMark, "bookMark.txt", start_x, start_y, width, height);
-//	currentBookMark = listBookMark.head;
 }
 void initHeader()
 {
@@ -172,9 +211,10 @@ void initHeader()
 	addTail(listHeader, createNode("<", positionX[0], start_y, widthElement[0], height));
 	addTail(listHeader, createNode(">", positionX[1], start_y, widthElement[1], height));
 	addTail(listHeader, createNode("Home", positionX[2], start_y, widthElement[2], height));
-	addTail(listHeader, createNode(listBookMark.head->url, positionX[3], start_y, widthElement[3], height));
-	addTail(listHeader, createNode("Search", positionX[4], start_y, widthElement[4], height));
+	addTail(listHeader, createNode(homeName, positionX[3], start_y, widthElement[3], height));
+	addTail(listHeader, createNode("|||", positionX[4], start_y, widthElement[4], height));
 	addTail(listHeader, createNode("Option", positionX[5], start_y, widthElement[5], height));
+	currentHeader = listHeader.head;
 }
 
 void Header(Node *currentUrl) {
@@ -190,7 +230,6 @@ void Header(Node *currentUrl) {
 
 void box(Node *header, int b_color, int t_color, bool isCenter)
 {
-	// set background
 	textcolor(b_color);
 	for (int iy = header->y + 1; iy <= header->y + header->h - 1; iy++)
 	{
@@ -201,7 +240,6 @@ void box(Node *header, int b_color, int t_color, bool isCenter)
 		}
 	}
 
-	// kiểm tra xem có muốn để chữ ở giữa khung không
 	if (isCenter)
 	{
 		int position = header->w / 2 + header->x - header->url.length() / 2;
@@ -216,16 +254,13 @@ void box(Node *header, int b_color, int t_color, bool isCenter)
 		cout << header->url;
 	}
 
-	textcolor(1); // bỏ tô màu viền
+	textcolor(1); 
 	
-	// tô màu khung
 	SetColor(outlinecolor);
 
-	// nếu chiều rộng hoặc chiều dài ko tồn tại -> ko vẽ
 	if (header->w < 1 || header->h < 1)
 		return;
 
-	// vẽ khung
 	for (int i = header->x; i < header->x + header->w; i++)
 	{
 		gotoXY(i, header->y);
@@ -252,18 +287,15 @@ void box(Node *header, int b_color, int t_color, bool isCenter)
 
 void moveHeader() {
 	ShowCur(0);
-	// chuyển thành danh sách vòng để khi người dùng di chuyển con trỏ
-	// tới cuối sẽ đi trở về đầu hoặc ngược lại
 	 listHeader.tail->next = listHeader.head;
 	 listHeader.head->prev = listHeader.tail;
 
-	Node *accumulator = listHeader.head;
+	Node *accumulator = currentHeader;
 	highline(accumulator, bgColor, textColor, true);
 
 	while(true) {
 		if(_kbhit()) {
 			char c = _getch();
-			// kiểm tra xem người dùng nhấn phím mũi tên
 			if(c == -32) {
 				c = _getch();
 				if(c == 77){
@@ -277,24 +309,29 @@ void moveHeader() {
 					highline(accumulator, bgColor, textColor, true);
 				}
 			}
-
 			else if (c == 13) {
 				listHeader.tail->next = NULL;
 				listHeader.head->prev = NULL;
+				currentHeader = accumulator;
 				if (accumulator->url == "<") {
-					if (currentUrl != listLS.head) {
+					if (currentUrl != listSearch.head) {
 						currentUrl = currentUrl->prev;
 					}
+					else moveHeader();
 				}
 				else if (accumulator->url == ">") {
-					if (currentUrl != listLS.tail) {
+					if (currentUrl != listSearch.tail) {
 						currentUrl = currentUrl->next;
 					}
+					else moveHeader();
 				}
 				else if (accumulator->url == "Home" && currentUrl->url != "myhomepage.com") {
-					addTail(listLS, createNode("myhomepage.com", 0, 0, 0, 0));
+					addTail(listSearch, createNode("myhomepage.com", 0, 0, 0, 0));
 					currentUrl = currentUrl->next;
 					ghiUrl("url.txt", currentUrl->url);
+				}
+				else if (accumulator->url == currentUrl->url) {
+					createSearchBar();
 				}
 				drawBrowser();
 			}
@@ -302,7 +339,6 @@ void moveHeader() {
 	}
 }
 
-// hàm này dùng chung cho listLS và listBookMark
 void n_box(listUrl list, int b_color, int t_color, bool isCenter)
 {
 	Node *accumulator = list.head;
