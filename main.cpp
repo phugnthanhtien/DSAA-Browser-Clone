@@ -45,14 +45,13 @@ void movePointer(listUrl list, bool isCenter);
 void initTab();
 void moveHeader();
 void initHeader();
-void initLichSu();
-void initBookMark();
-void veLichSu();
-void LichSu();
+void initViewList(listUrl &list);
+void drawList(listUrl list);
 void Header(Node *currentUrl);
 void drawBrowser();
 void createSearchBar();
 void drawTab(string content, int x, int y, bool isFocus);
+void drawOption();
 
 int main() {
 // khoi tao duy nhat 1 lan
@@ -75,11 +74,17 @@ void drawBrowser() {
 	system("cls");
 	drawTab(currentUrl->url, 1, 0,true);
 	Header(currentUrl);
-	ascii_art(currentUrl->url, xT, yT, t_color);
-	if(currentUrl->url == homeName) {
-		createSearchBar();
-	} else {
-		moveHeader();
+	if(currentHeader->url == "Option") {
+		drawOption();
+	}
+	else {
+		ascii_art(currentUrl->url, xT, yT, t_color);
+		if(currentUrl->url == homeName || currentHeader->x == positionX[3]) { 
+			createSearchBar();
+		}
+		else {
+			moveHeader();
+		}
 	}
 }
 
@@ -109,8 +114,8 @@ void createSearchBar() {
 	}
 }
 
-void LichSu() {
-	Node *accumulator = listLS.head;
+void drawList(listUrl list) {
+	Node *accumulator = list.head;
 	int i = 0;
 	while(accumulator != NULL) {
 		box(accumulator, 1, textColor, false);
@@ -165,20 +170,32 @@ void movePointer(listUrl list, bool isCenter) {
 					}
 				}
 			}
+			else if (c == 13) {
+				list.tail->next = NULL;
+				list.head->prev = NULL;
+				if (accumulator == list.head) {
+					initViewList(listLS);
+					drawList(listLS);
+					movePointer(listLS, false);
+				} 
+				else if(accumulator == list.head->next) {
+					initViewList(listBookMark);
+					drawList(listBookMark);
+					movePointer(listBookMark, false);
+				}
+			}
 		}
 	}
-	list.tail->next = NULL;
-	list.head->prev = NULL;
 }
-
-void initLichSu() {
+void initViewList(listUrl &list) {
 	ShowCur(0);
 	int start_x = 1;
 	int start_y = 6;
 	int width = 101;
 	int height = 2;
-	docFile(listLS, "url.txt", start_x, start_y, width, height);
-	currentUrl = listLS.tail;
+	createList(list);
+	string fileName = true ? "url.txt" : "bookMark.txt";
+	docFile(list, fileName, start_x, start_y, width, height);
 }
 
 void initBookMark() {
@@ -302,6 +319,7 @@ void moveHeader() {
 					accumulator = accumulator->prev;
 					highline(accumulator, bgColor, textColor, true);
 				}
+				currentHeader = accumulator;
 			} else if (c == 13) {
 				listHeader.tail->next = NULL;
 				listHeader.head->prev = NULL;
@@ -320,17 +338,24 @@ void moveHeader() {
 					currentUrl = currentUrl->next;
 					ghiUrl("url.txt", currentUrl->url);
 				} 
-				else if (accumulator->url == currentUrl->url) {
-					createSearchBar();
-				}
 				else if(accumulator->url == "|||\\") {
 					currentUrl->isBookMark = !currentUrl->isBookMark;
 				}
+				currentHeader = accumulator;
 				drawBrowser();
 			}
-			currentHeader = accumulator;
 		}
 	}
+}
+
+void drawOption() {
+	listUrl option;
+	createList(option);
+	int x = 15, y = 10, w = 50, h = 2;
+	addTail(option, createNode("View history", x, y, w, h));
+	addTail(option, createNode("View history", x, y + 2, w, h));
+	n_box(option, 1, textColor, false);
+	movePointer(option, false);
 }
 
 void n_box(listUrl list, int b_color, int t_color, bool isCenter) {
