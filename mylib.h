@@ -21,7 +21,7 @@ int whereY()
 	return -1;
 }
 //============== d?ch con tr? hi?n t?i d?n di?m c� t?a d? (x,y) ==========
-void gotoXY(int x, int y)
+void gotoXY(short int x,short int y)
 {
 	HANDLE hConsoleOutput;
 	COORD Cursor_an_Pos = { x, y };

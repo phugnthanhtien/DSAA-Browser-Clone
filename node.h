@@ -6,7 +6,7 @@ using namespace std;
 struct Node {
     string url;
 	int x, y, w, h;
-	bool isBookMark;
+	bool isBookMark = false;
     Node *prev, *next;
 };
 
