@@ -42,6 +42,7 @@ void box(Node *header, int b_color, int t_color, bool isCenter);
 void n_box(listUrl list, int b_color, int t_color, bool isCenter);
 void highline(Node *accumulator, int b_color, int t_color, bool isCenter);
 void movePointer(listUrl list, bool isCenter);
+void initTab();
 void moveHeader();
 void initHeader();
 void initLichSu();
@@ -51,6 +52,7 @@ void LichSu();
 void Header(Node *currentUrl);
 void drawBrowser();
 void createSearchBar();
+void drawTab(string content, int x, int y, bool isFocus);
 
 int main() {
 // khoi tao duy nhat 1 lan
@@ -71,6 +73,7 @@ void initVariable() {
 
 void drawBrowser() {
 	system("cls");
+	drawTab(currentUrl->url, 1, 0,true);
 	Header(currentUrl);
 	ascii_art(currentUrl->url, xT, yT, t_color);
 	if(currentUrl->url == homeName) {
@@ -190,7 +193,7 @@ void initBookMark() {
 void initHeader() {
 	ShowCur(0);
 	int start_x = 1;
-	int start_y = 1;
+	int start_y = 2;
 	int width = 8;
 	int height = 2;
 	int space = 1;
@@ -366,4 +369,31 @@ void highline(Node *accumulator, int b_color, int t_color, bool isCenter) {
 	}
 	textcolor(0);
 	ShowCur(0);
+}
+
+void drawTab(string content, int x = 0, int y = 0, bool isFocus = false) {
+	int sizeTab = 15;
+	int text = isFocus ? 14 : textColor;
+	for(int i=0; i< sizeTab; i++) {
+		for(int j = 0; j<2; j++) {
+			if(j == 0) {
+				textcolor(outlinecolor);
+				gotoXY(x + i, y);
+				i == sizeTab - 1 ?  cout << " x" : cout << char(196);
+			}
+			else {
+				gotoXY(x + 1, y + j);
+				if(content.size() > sizeTab - 5) {
+					textcolor(text);
+					cout << content.substr(0, sizeTab - 5) + ".. ";
+				}
+				else {
+					textcolor(text);
+					cout << content << string(sizeTab - content.size() - 2, ' ');
+				}
+				textcolor(outlinecolor);
+				cout << char(47);
+			}
+		}
+	}
 }
