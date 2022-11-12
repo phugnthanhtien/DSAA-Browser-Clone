@@ -14,6 +14,7 @@ int positionX[6];
 int textColor = 15;
 int bgColor = 200;
 int highlineColor = 143;
+bool viewHistory = false, viewBookMark = false;
 string homeName = "myhomepage.com";
 listUrl listHeader;
 listUrl listLS;
@@ -74,6 +75,15 @@ void drawBrowser() {
 	system("cls");
 	drawTab(currentUrl->url, 1, 0,true);
 	Header(currentUrl);
+	if(viewHistory) {
+		drawList(listLS);
+		movePointer(listLS, false);
+	}
+	else if(viewBookMark) {
+		drawList(listBookMark);
+		movePointer(listBookMark, false);
+	} 
+	
 	if(currentHeader->url == "Option") {
 		drawOption();
 	}
@@ -89,8 +99,8 @@ void drawBrowser() {
 }
 
 void createSearchBar() {
-	box(createNode("", 30, 19, 70, 2), 0, 3, false);
-	gotoXY(31, 20);
+	box(createNode("", 42, 19, 50, 2), 0, 3, false);
+	gotoXY(43, 20);
 	ShowCur(1);
 	string search;
 	while(true) {
@@ -106,6 +116,7 @@ void createSearchBar() {
 				getline(cin, search);
 				if(search != "") {
 					addTail(listSearch, createNode(search));
+					if(search != currentUrl->url) ghiUrl("url.txt", search);
 					currentUrl = currentUrl->next;
 					drawBrowser();
 				}
@@ -129,19 +140,6 @@ void drawList(listUrl list) {
 		accumulator = accumulator->next;
 	}
 }
-
-// void veLichSu()
-// {
-// 	int xLichSu = 1;
-// 	int yLichSu = 6;
-// 	int widthLichSu = 110;
-// 	int heightLichSu = 2;
-// 	bool isCenterLichSu = false;
-
-// 	initLichSu();
-// 	n_box(listLS, bgColor, textColor, false);
-// 	movePointer(listLS, isCenterLichSu);
-// }
 
 void movePointer(listUrl list, bool isCenter) {
 	ShowCur(0);
@@ -174,15 +172,16 @@ void movePointer(listUrl list, bool isCenter) {
 				list.tail->next = NULL;
 				list.head->prev = NULL;
 				if (accumulator == list.head) {
+					viewHistory = true;
+					viewBookMark = false;
 					initViewList(listLS);
-					drawList(listLS);
-					movePointer(listLS, false);
 				} 
 				else if(accumulator == list.head->next) {
+					viewHistory = false;
+					viewBookMark = true;
 					initViewList(listBookMark);
-					drawList(listBookMark);
-					movePointer(listBookMark, false);
 				}
+				drawBrowser();
 			}
 		}
 	}
@@ -194,19 +193,10 @@ void initViewList(listUrl &list) {
 	int width = 101;
 	int height = 2;
 	createList(list);
-	string fileName = true ? "url.txt" : "bookMark.txt";
+	string fileName = viewHistory ? "url.txt" : "bookMark.txt";
 	docFile(list, fileName, start_x, start_y, width, height);
 }
 
-void initBookMark() {
-	ShowCur(0);
-	int start_x = 1;
-	int start_y = 6;
-	int width = 101;
-	int height = 2;
-
-	docFile(listBookMark, "bookMark.txt", start_x, start_y, width, height);
-}
 void initHeader() {
 	ShowCur(0);
 	int start_x = 1;
@@ -323,6 +313,8 @@ void moveHeader() {
 			} else if (c == 13) {
 				listHeader.tail->next = NULL;
 				listHeader.head->prev = NULL;
+				viewHistory = false;
+				viewBookMark = false;
 				if (accumulator->url == "<") {
 					if (currentUrl != listSearch.head) {
 						currentUrl = currentUrl->prev;
@@ -340,6 +332,7 @@ void moveHeader() {
 				} 
 				else if(accumulator->url == "|||\\") {
 					currentUrl->isBookMark = !currentUrl->isBookMark;
+					if(currentUrl->isBookMark) ghiUrl("bookMark.txt", currentUrl->url);
 				}
 				currentHeader = accumulator;
 				drawBrowser();
@@ -352,8 +345,8 @@ void drawOption() {
 	listUrl option;
 	createList(option);
 	int x = 15, y = 10, w = 50, h = 2;
-	addTail(option, createNode("View history", x, y, w, h));
-	addTail(option, createNode("View history", x, y + 2, w, h));
+	addTail(option, createNode("View History", x, y, w, h));
+	addTail(option, createNode("View BookMark", x, y + 2, w, h));
 	n_box(option, 1, textColor, false);
 	movePointer(option, false);
 }
