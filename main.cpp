@@ -10,7 +10,7 @@
 using namespace std;
 
 // global variable
-int positionX[6];
+int positionX[7];
 int textColor = 15;
 int bgColor = 200;
 int highlineColor = 143;
@@ -66,6 +66,8 @@ int main() {
 }
 
 void initVariable() {
+	docFile(listBookMark, "bookMark.txt", 0, 0, 0, 0);
+	docFile(listLS, "url.txt", 0, 0, 0, 0);
 	createList(listSearch);
 	currentUrl = createNode(homeName);
 	addTail(listSearch, currentUrl);
@@ -116,7 +118,7 @@ void createSearchBar() {
 				getline(cin, search);
 				if(search != "") {
 					addTail(listSearch, createNode(search));
-					if(search != currentUrl->url) ghiUrl("url.txt", search);
+					addTail(listLS, createNode(search));
 					currentUrl = currentUrl->next;
 					drawBrowser();
 				}
@@ -206,9 +208,9 @@ void initHeader() {
 	int space = 1;
 	bool isCenter = true;
 
-	int widthElement[6] = {width, width, width + 1, width + 65, width + 4, width + 4};
+	int widthElement[7] = {width, width, width + 1, width + 65, width + 4, width + 4, width + 1};
 	positionX[0] = start_x;
-	for (int i = 1; i < 6; i++) {
+	for (int i = 1; i < 7; i++) {
 		positionX[i] = positionX[i - 1] + widthElement[i - 1] + space;
 	}
 	createList(listHeader);
@@ -218,6 +220,7 @@ void initHeader() {
 	addTail(listHeader, createNode(homeName, positionX[3], start_y, widthElement[3], height));
 	addTail(listHeader, createNode("|||\\", positionX[4], start_y, widthElement[4], height));
 	addTail(listHeader, createNode("Option", positionX[5], start_y, widthElement[5], height));
+	addTail(listHeader, createNode("X", positionX[6], start_y, widthElement[6], height));
 	currentHeader = listHeader.head;
 }
 
@@ -328,11 +331,16 @@ void moveHeader() {
 				else if (accumulator->url == "Home" && currentUrl->url != homeName) {
 					addTail(listSearch, createNode(homeName));
 					currentUrl = currentUrl->next;
-					ghiUrl("url.txt", currentUrl->url);
 				} 
 				else if(accumulator->url == "|||\\") {
 					currentUrl->isBookMark = !currentUrl->isBookMark;
-					if(currentUrl->isBookMark) ghiUrl("bookMark.txt", currentUrl->url);
+					if(currentUrl->isBookMark)
+						addTail(listBookMark, currentUrl);
+				}
+				else if (accumulator->url == "X") {
+					ghiFile(listLS, "url.txt");
+					ghiFile(listBookMark, "bookMark.txt");
+					// khi exit thi cua so nao se hien len?
 				}
 				currentHeader = accumulator;
 				drawBrowser();

@@ -25,6 +25,6 @@ void ghiFile(listUrl &list, string fileName) {
 
 void ghiUrl(string fileName, string url) {
     ofstream outfile;
-    outfile.open(fileName, std::ios_base::app); // append instead of overwrite
+    outfile.open(fileName, std::ios_base::app);
     outfile << url << endl;
 }
