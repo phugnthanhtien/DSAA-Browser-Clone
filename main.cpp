@@ -66,6 +66,8 @@ int main() {
 }
 
 void initVariable() {
+	docFile(listBookMark, "bookMark.txt", 0, 0, 0, 0);
+	docFile(listLS, "url.txt", 0, 0, 0, 0);
 	createList(listSearch);
 	currentUrl = createNode(homeName);
 	addTail(listSearch, currentUrl);
@@ -116,6 +118,7 @@ void createSearchBar() {
 				getline(cin, search);
 				if(search != "") {
 					addTail(listSearch, createNode(search));
+					addTail(listLS, createNode(search));
 					currentUrl = currentUrl->next;
 					drawBrowser();
 				}
@@ -335,7 +338,7 @@ void moveHeader() {
 						addTail(listBookMark, currentUrl);
 				}
 				else if (accumulator->url == "X") {
-					ghiFile(listSearch, "url.txt");
+					ghiFile(listLS, "url.txt");
 					ghiFile(listBookMark, "bookMark.txt");
 					// khi exit thi cua so nao se hien len?
 				}
