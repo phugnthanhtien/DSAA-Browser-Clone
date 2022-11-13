@@ -328,14 +328,19 @@ void moveHeader() {
 				else if (accumulator->url == "Home" && currentUrl->url != homeName) {
 					addTail(listSearch, createNode(homeName));
 					currentUrl = currentUrl->next;
-					ghiUrl("url.txt", currentUrl->url);
 				} 
 				else if(accumulator->url == "|||\\") {
 					currentUrl->isBookMark = !currentUrl->isBookMark;
-					if(currentUrl->isBookMark) ghiUrl("bookMark.txt", currentUrl->url);
+					if(currentUrl->isBookMark)
+						addTail(listBookMark, currentUrl);
 				}
 				currentHeader = accumulator;
 				drawBrowser();
+				if (accumulator->url == "X") {
+					ghiFile(listLS, "url.txt");
+					ghiFile(listBookMark, "listBookMark.txt");
+					exit(0);
+				}
 			}
 		}
 	}
