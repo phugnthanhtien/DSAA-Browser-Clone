@@ -66,8 +66,10 @@ int main() {
 }
 
 void initVariable() {
-	docFile(listBookMark, "bookMark.txt", 0, 0, 0, 0);
-	docFile(listLS, "url.txt", 0, 0, 0, 0);
+	createList(listBookMark);
+	createList(listLS);
+	docFile(listBookMark, "bookMark.txt");
+	docFile(listLS, "url.txt");
 	createList(listSearch);
 	currentUrl = createNode(homeName);
 	addTail(listSearch, currentUrl);
@@ -130,7 +132,12 @@ void createSearchBar() {
 void drawList(listUrl list) {
 	Node *accumulator = list.head;
 	int i = 0;
+	int x = 1, y = 6, w = 101, h = 2;
 	while(accumulator != NULL) {
+		accumulator->x = x;
+		accumulator->y = y + (i*2);
+		accumulator->w = w;
+		accumulator->h = h;
 		box(accumulator, 1, textColor, false);
 		if (i != 0) {
 			gotoXY(accumulator->x, accumulator->y);
@@ -163,7 +170,11 @@ void movePointer(listUrl list, bool isCenter) {
 
 				} else if(c == 72) {
 					highline(accumulator, 1, textColor, isCenter);
-					if(accumulator == list.head) moveHeader();
+					if(accumulator == list.head) {
+						list.tail->next = NULL;
+						list.head->prev = NULL;
+						moveHeader();
+					} 
 					else {
 						accumulator = accumulator->prev;
 						highline(accumulator, bgColor, textColor, isCenter);
@@ -176,28 +187,26 @@ void movePointer(listUrl list, bool isCenter) {
 				if (accumulator == list.head) {
 					viewHistory = true;
 					viewBookMark = false;
-					initViewList(listLS);
 				} 
 				else if(accumulator == list.head->next) {
 					viewHistory = false;
 					viewBookMark = true;
-					initViewList(listBookMark);
 				}
 				drawBrowser();
 			}
 		}
 	}
 }
-void initViewList(listUrl &list) {
-	ShowCur(0);
-	int start_x = 1;
-	int start_y = 6;
-	int width = 101;
-	int height = 2;
-	createList(list);
-	string fileName = viewHistory ? "url.txt" : "bookMark.txt";
-	docFile(list, fileName, start_x, start_y, width, height);
-}
+//void initViewList(listUrl &list) {
+//	ShowCur(0);
+//	int start_x = 1;
+//	int start_y = 6;
+//	int width = 101;
+//	int height = 2;
+//	createList(list);
+//	string fileName = viewHistory ? "url.txt" : "bookMark.txt";
+//	docFile(list, fileName, start_x, start_y, width, height);
+//}
 
 void initHeader() {
 	ShowCur(0);
@@ -208,7 +217,7 @@ void initHeader() {
 	int space = 1;
 	bool isCenter = true;
 
-	int widthElement[7] = {width, width, width + 1, width + 65, width + 4, width + 4, width + 1};
+	int widthElement[7] = {width, width, width + 1, width + 65, width + 4, width + 4, width};
 	positionX[0] = start_x;
 	for (int i = 1; i < 7; i++) {
 		positionX[i] = positionX[i - 1] + widthElement[i - 1] + space;
@@ -335,7 +344,7 @@ void moveHeader() {
 				else if(accumulator->url == "|||\\") {
 					currentUrl->isBookMark = !currentUrl->isBookMark;
 					if(currentUrl->isBookMark)
-						addTail(listBookMark, currentUrl);
+						addTail(listBookMark, createNode(currentUrl->url));
 				}
 				else if (accumulator->url == "X") {
 					ghiFile(listLS, "url.txt");
@@ -352,7 +361,7 @@ void moveHeader() {
 void drawOption() {
 	listUrl option;
 	createList(option);
-	int x = 15, y = 10, w = 50, h = 2;
+	int x = positionX[3] + 10, y = 10, w = 50, h = 2;
 	addTail(option, createNode("View History", x, y, w, h));
 	addTail(option, createNode("View BookMark", x, y + 2, w, h));
 	n_box(option, 1, textColor, false);
