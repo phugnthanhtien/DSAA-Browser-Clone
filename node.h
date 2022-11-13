@@ -6,6 +6,7 @@ using namespace std;
 struct Node {
     string url;
 	int x, y, w, h;
+	bool isBookMark = false;
     Node *prev, *next;
 };
 
@@ -13,7 +14,7 @@ struct listUrl {
     Node *head, *tail;
 };
 
-Node *createNode(string data, int x, int y, int w, int h) {
+Node *createNode(string data, int x = 0, int y = 0, int w = 0, int h = 0) {
     Node *p = new Node;
     if (p == NULL)
         return NULL;
