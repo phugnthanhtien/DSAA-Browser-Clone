@@ -1,8 +1,13 @@
 #pragma once
 #include "node.h"
 
+struct Square {
+	int x, y, w, h;
+};
+
 struct Tab {
-    listUrl listUrl;
+    listUrl listUrl, listHeader;
+    Square square;
     Tab *prev;
     Tab *next;
 };
@@ -17,9 +22,14 @@ void initListTab(LTab &listTab) {
     listTab.tail = NULL;
 }
 
-Tab *createTab(listUrl list) {
+Tab *createTab(listUrl list, listUrl listHeader, int x = 0, int y = 0, int w = 0, int h = 0) {
     Tab *newTab = new Tab;
     newTab->listUrl = list;
+    newTab->listHeader = listHeader;
+    newTab->square.x = x;
+    newTab->square.y = y;
+    newTab->square.w = w;
+    newTab->square.h = h;
     newTab->next = NULL;
     newTab->prev = NULL;
     return newTab;
@@ -54,9 +64,6 @@ void deleteTab(LTab &listTab, Tab *currentTab) {
 		}
 		delete currentTab;
 	}
-	
-	
-	
 }
 
 void printListTab(LTab listTab) {
@@ -66,43 +73,3 @@ void printListTab(LTab listTab) {
         accumulator = accumulator->next;
     }
 }
-
-//int main() {
-//    listUrl listLS;
-//    listUrl listCehck;
-//    listUrl listTest;
-//    listUrl listTTTT;
-//    createList(listCehck);
-//    createList(listLS);
-//    createList(listTest);
-//    createList(listTTTT);
-//
-//    addTail(listLS, createNode("hehhe"));
-//    addTail(listCehck, createNode("123564"));
-//	addTail(listTest, createNode("test"));
-//	addTail(listTTTT, createNode("just test"));
-//
-//    LTab myTabs;
-//    initListTab(myTabs);
-//
-//    Tab *LS = createTab(listLS);
-//    Tab *cehck = createTab(listCehck);
-//    Tab * test = createTab(listTest);
-//    Tab *t = createTab(listTTTT);
-//
-//    addTab(myTabs, LS);
-//    addTab(myTabs, cehck);
-//    addTab(myTabs, test);
-//    addTab(myTabs, t);
-//
-//
-//	printListTab(myTabs);
-//	cout << endl;
-//	deleteTab(myTabs, test);
-//
-//    printListTab(myTabs);
-//
-//    return 0;
-//}
-
-
