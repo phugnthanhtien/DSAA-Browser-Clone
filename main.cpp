@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include "mylib.h"
-#include  "node.h"
+#include  "Tab.h"
 #include "docghifile.h"
 #include "content.h"
 #define MAX 100
