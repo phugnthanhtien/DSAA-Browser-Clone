@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include "mylib.h"
-#include  "Tab.h"
+#include  "node.h"
 #include "docghifile.h"
 #include "content.h"
 #define MAX 100
@@ -130,28 +130,31 @@ void createSearchBar() {
 }
 
 void drawList(listUrl list) {
-	Node *accumulator = list.head;
-	int i = 0;
-	int x = 1, y = 6, w = 101, h = 2;
-	while(accumulator != NULL) {
-		accumulator->x = x;
-		accumulator->y = y + (i*2);
-		accumulator->w = w;
-		accumulator->h = h;
-		box(accumulator, 1, textColor, false);
-		if (i != 0) {
-			gotoXY(accumulator->x, accumulator->y);
-			cout << char(195);
-			gotoXY(accumulator->x +accumulator-> w, accumulator->y);
-			cout << char(180);
+	if (list.head != NULL) {
+		Node *accumulator = list.head;
+		int i = 0;
+		int x = 1, y = 6, w = 101, h = 2;
+		while(accumulator != NULL) {
+			accumulator->x = x;
+			accumulator->y = y + (i*2);
+			accumulator->w = w;
+			accumulator->h = h;
+			box(accumulator, 1, textColor, false);
+			if (i != 0) {
+				gotoXY(accumulator->x, accumulator->y);
+				cout << char(195);
+				gotoXY(accumulator->x +accumulator-> w, accumulator->y);
+				cout << char(180);
+			}
+			i++;
+			accumulator = accumulator->next;
 		}
-		i++;
-		accumulator = accumulator->next;
 	}
 }
 
 void movePointer(listUrl list, bool isCenter) {
 	ShowCur(0);
+	if (list.head != NULL) {
 	list.tail->next = list.head;
 	list.head->prev = list.tail;
 
@@ -181,6 +184,20 @@ void movePointer(listUrl list, bool isCenter) {
 					}
 				}
 			}
+			else if (c == 8) {
+				if (viewHistory) {
+					listLS.tail->next = NULL;
+					listLS.head->prev = NULL;
+					removeNode(listLS, accumulator);
+					drawBrowser();
+				}
+				else if (viewBookMark) {
+					listBookMark.tail->next = NULL;
+					listBookMark.head->prev = NULL;
+					removeNode(listBookMark, accumulator);
+					drawBrowser();
+				}
+			}
 			else if (c == 13) {
 				list.tail->next = NULL;
 				list.head->prev = NULL;
@@ -195,6 +212,7 @@ void movePointer(listUrl list, bool isCenter) {
 				drawBrowser();
 			}
 		}
+	}
 	}
 }
 //void initViewList(listUrl &list) {

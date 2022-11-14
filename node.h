@@ -49,11 +49,18 @@ void removeList(listUrl &list) {
 }
 
 void removeNode(listUrl &list, Node *x) {
-    if (x == list.head) {
-        return;
-    }
+    if (list.head == NULL) return;
     else {
-        if (x == list.tail) {
+        if (list.head == list.tail && x == list.head) {
+            list.head = NULL;
+            list.tail = NULL;
+        }
+        else if (x == list.head) {
+            list.head = list.head->next;
+            x->next->prev = NULL;
+        }
+        else if (x == list.tail) {
+            list.tail = list.tail->prev;
             x->prev->next = NULL;      
         }
         else {
