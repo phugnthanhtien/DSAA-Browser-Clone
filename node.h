@@ -88,9 +88,17 @@ void addAfter(listUrl &list, Node* node, Node* after)
    if (after)
    {
       node->prev = after;
+<<<<<<< master
       node->next = NULL;
       after->next = node;
       list.tail = node;
+=======
+      node->next = after->next;
+      after->next = node;
+      if (list.tail != after)
+         after->next->prev = node;
+      if (list.tail == after) list.tail = after;
+>>>>>>> update background - chỉnh addCurrent ở listSearch - findAndDelete
    }
    else
       addTail(list, node);
@@ -106,5 +114,9 @@ void findAndDelete(listUrl &list, string key)
 {
    Node* result = SearchNode(list, key);
    removeNode(list, result);
+<<<<<<< master
 }
 
+=======
+}
+>>>>>>> update background - chỉnh addCurrent ở listSearch - findAndDelete

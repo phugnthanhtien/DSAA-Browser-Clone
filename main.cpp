@@ -4,6 +4,7 @@
 #include  "Tab.h"
 #include "docghifile.h"
 #include "content.h"
+#include "vebackground.h"
 #define MAX 100
 #define outlinecolor 11
 
@@ -22,7 +23,7 @@ LTab listTab;
 Tab *currentTab;
 
 
-int xT = 30;
+int xT = 40;
 int yT = 10;
 int t_color = 12;
 
@@ -160,9 +161,16 @@ void drawBrowser() {
 		drawOption(currentTab->listHeader);
 	}
 	else {
+<<<<<<< master
 		ascii_art(currentTab->currentUrl->url, xT, yT, t_color);
 		if(currentTab->currentUrl->url == homeName || currentTab->currentHeader->x == positionX[3]) { 
 			createSearchBar(currentTab->listUrl, currentTab->listHeader);
+=======
+		ascii_art(currentUrl->url, xT, yT, t_color);
+		drawBR();
+		if(currentUrl->url == homeName || currentHeader->x == positionX[3]) { 
+			createSearchBar();
+>>>>>>> update background - chỉnh addCurrent ở listSearch - findAndDelete
 		}
 		else {
 			moveHeader(currentTab->listUrl, currentTab->listHeader);
@@ -421,9 +429,15 @@ void moveHeader(listUrl &listSearch, listUrl &listHeader) {
 						currentTab->currentUrl = currentTab->currentUrl->next;
 					} else moveHeader(listSearch, listHeader);
 				} 
+<<<<<<< master
 				else if (accumulator->url == "Home" && currentTab->currentUrl->url != homeName) {
 					addTail(listSearch, createNode(homeName));
 					currentTab->currentUrl = currentTab->currentUrl->next;
+=======
+				else if (accumulator->url == "Home" && currentUrl->url != homeName) {
+					addAfter(listSearch, createNode(homeName), currentUrl);
+					currentUrl = currentUrl->next;
+>>>>>>> update background - chỉnh addCurrent ở listSearch - findAndDelete
 				} 
 				else if(accumulator->url == "|||\\") {
 					currentTab->currentUrl->isBookMark = !currentTab->currentUrl->isBookMark;
