@@ -46,18 +46,17 @@ void box(Node *header, int b_color, int t_color, bool isCenter);
 void n_box(listUrl list, int b_color, int t_color, bool isCenter);
 void highline(Node *accumulator, int b_color, int t_color, bool isCenter);
 
-void createSearchBar(listUrl &listSearch, listUrl &listHeader, Node *currentUrl, Node *currentHeader);
-void Header(listUrl &listHeader, Node *currentUrl);
+void createSearchBar(listUrl &listSearch, listUrl &listHeader);
+void Header(listUrl &listHeader);
 
 void drawList(listUrl list);
-void drawBrowser(listUrl &listSearch, listUrl &listHeader, Node *currentUrl, Node *currentHeader);
+void drawBrowser(listUrl &listSearch, listUrl &listHeader);
 void drawSquareTab(string content, int x, int y, bool isFocus);
-void drawOption(listUrl &listHeader, Node *currentUrl, Node *currentHeader);
-void drawTab();
+void drawOption(listUrl &listHeader);
 void drawListTab();
 
-void movePointer(listUrl &list, listUrl &listHeader, bool isCenter, Node *currentUrl, Node *currentHeader);
-void moveHeader(listUrl &listSearch, listUrl &listHeader, Node *currentUrl, Node *currentHeader);
+void movePointer(listUrl &list, listUrl &listHeader, bool isCenter);
+void moveHeader(listUrl &listSearch, listUrl &listHeader);
 void moveTab();
 
 
@@ -67,11 +66,7 @@ int main() {
 	initVariable();
 	initTab();
 	
-
-	drawTab();
-	
-	
-//	moveTab();
+	drawBrowser(currentTab->listUrl, currentTab->listHeader);
 	
 	_getch();
 	return 0;
@@ -101,14 +96,9 @@ void initTab() {
 	currentTab = listTab.tail;
 }
 
-void drawTab() {
-	Node *currentHeader = currentTab->listHeader.head;
-	drawBrowser(currentTab->listUrl, currentTab->listHeader, currentTab->currentUrl, currentHeader);
-}
-
 void drawListTab() {
 	Tab *accumulator = listTab.head;
-	int x = 0, y = 0, space = 18;
+	int x = 1, y = 0, space = 18;
 	while(accumulator != NULL) {
 		bool isCurrent = accumulator == currentTab ? true : false;
 		accumulator->square.x = x;
@@ -138,43 +128,47 @@ void moveTab() {
 					currentTab = currentTab->prev;
 					drawSquareTab(currentTab->currentUrl->url, currentTab->square.x, currentTab->square.y, true);
 				}
+				else if(c == 80) {
+					moveHeader(currentTab->listUrl, currentTab->listHeader);
+				}
 			}
 			else if(c == 13) {
 				listTab.tail->next = NULL;
 				listTab.head->prev = NULL;
+				drawBrowser(currentTab->listUrl, currentTab->listHeader);
 			}
 		}
 	}
 }
 
-void drawBrowser(listUrl &listSearch, listUrl &listHeader, Node *currentUrl, Node *currentHeader) {
+void drawBrowser(listUrl &listSearch, listUrl &listHeader) {
 	system("cls");
 	drawListTab();
-	Header(listHeader, currentUrl);
+	Header(listHeader);
 	if(viewHistory) {
 		drawList(listLS);
-		movePointer(listLS, listHeader, false, currentUrl, currentHeader);
+		movePointer(listLS, listHeader, false);
 	}
 	else if(viewBookMark) {
 		drawList(listBookMark);
-		movePointer(listBookMark, listHeader, false, currentUrl, currentHeader);
+		movePointer(listBookMark, listHeader, false);
 	} 
 	
-	if(currentHeader->url == "Option") {
-		drawOption(listHeader, currentUrl, currentHeader);
+	if(currentTab->currentHeader->url == "Option") {
+		drawOption(listHeader);
 	}
 	else {
-		ascii_art(currentUrl->url, xT, yT, t_color);
-		if(currentUrl->url == homeName || currentHeader->x == positionX[3]) { 
-			createSearchBar(listSearch, listHeader, currentUrl, currentHeader);
+		ascii_art(currentTab->currentUrl->url, xT, yT, t_color);
+		if(currentTab->currentUrl->url == homeName || currentTab->currentHeader->x == positionX[3]) { 
+			createSearchBar(listSearch, listHeader);
 		}
 		else {
-			moveHeader(listSearch, listHeader, currentUrl, currentHeader);
+			moveHeader(listSearch, listHeader);
 		}
 	}
 }
 
-void createSearchBar(listUrl &listSearch,listUrl &listHeader, Node *currentUrl, Node *currentHeader) {
+void createSearchBar(listUrl &listSearch,listUrl &listHeader) {
 	box(createNode("", 42, 19, 50, 2), 0, 3, false);
 	gotoXY(43, 20);
 	ShowCur(1);
@@ -185,7 +179,7 @@ void createSearchBar(listUrl &listSearch,listUrl &listHeader, Node *currentUrl, 
 			if(c == -32) {
 				c = _getch();
 				if(c == 72) {
-					moveHeader(listSearch, listHeader, currentUrl, currentHeader);
+					moveHeader(listSearch, listHeader);
 				}
 			} else {
 				textcolor(15);
@@ -193,8 +187,8 @@ void createSearchBar(listUrl &listSearch,listUrl &listHeader, Node *currentUrl, 
 				if(search != "") {
 					addTail(listSearch, createNode(search));
 					addTail(listLS, createNode(search));
-					currentUrl = currentUrl->next;
-					drawBrowser(listSearch, listHeader, currentUrl, currentHeader);
+					currentTab->currentUrl = currentTab->currentUrl->next;
+					drawBrowser(listSearch, listHeader);
 				}
 			}
 		}
@@ -224,7 +218,7 @@ void drawList(listUrl list) {
 	}
 }
 
-void movePointer(listUrl &list, listUrl &listHeader, bool isCenter, Node *currentUrl, Node *currentHeader) {
+void movePointer(listUrl &list, listUrl &listHeader, bool isCenter) {
 	ShowCur(0);
 	if (list.head != NULL) {
 	list.tail->next = list.head;
@@ -248,7 +242,7 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter, Node *curren
 					if(accumulator == list.head) {
 						list.tail->next = NULL;
 						list.head->prev = NULL;
-						moveHeader(list, listHeader, currentUrl, currentHeader);
+						moveHeader(list, listHeader);
 					} 
 					else {
 						accumulator = accumulator->prev;
@@ -261,13 +255,13 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter, Node *curren
 					listLS.tail->next = NULL;
 					listLS.head->prev = NULL;
 					removeNode(listLS, accumulator);
-					drawBrowser(list, listHeader, currentUrl, currentHeader);
+					drawBrowser(list, listHeader);
 				}
 				else if (viewBookMark) {
 					listBookMark.tail->next = NULL;
 					listBookMark.head->prev = NULL;
 					removeNode(listBookMark, accumulator);
-					drawBrowser(list, listHeader, currentUrl, currentHeader);
+					drawBrowser(list, listHeader);
 				}
 			}
 			else if (c == 13) {
@@ -281,22 +275,15 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter, Node *curren
 					viewHistory = false;
 					viewBookMark = true;
 				}
-				drawBrowser(list, listHeader, currentUrl, currentHeader);
+				else if(accumulator == list.tail) {
+					initTab();
+				}
+				drawBrowser(list, listHeader);
 			}
 		}
 	}
 	}
 }
-//void initViewList(listUrl &list) {
-//	ShowCur(0);
-//	int start_x = 1;
-//	int start_y = 6;
-//	int width = 101;
-//	int height = 2;
-//	createList(list);
-//	string fileName = viewHistory ? "url.txt" : "bookMark.txt";
-//	docFile(list, fileName, start_x, start_y, width, height);
-//}
 
 void initHeader(listUrl &listHeader) {
 	ShowCur(0);
@@ -322,14 +309,14 @@ void initHeader(listUrl &listHeader) {
 	addTail(listHeader, createNode("X", positionX[6], start_y, widthElement[6], height));
 }
 
-void Header(listUrl &listHeader, Node *currentUrl) {
+void Header(listUrl &listHeader) {
 	Node *accumulator = listHeader.head;
 	while(accumulator != NULL) {
 		if(accumulator->x == positionX[3]) {
-			accumulator->url = currentUrl->url;
+			accumulator->url = currentTab->currentUrl->url;
 		}
 		box(accumulator, 1, textColor, true);
-		if(accumulator->x == positionX[4] && currentUrl->isBookMark) {
+		if(accumulator->x == positionX[4] && currentTab->currentUrl->isBookMark) {
 			highline(accumulator, highlineColor, textColor, true);
 		}
 		accumulator = accumulator->next;
@@ -385,12 +372,12 @@ void box(Node *header, int b_color, int t_color, bool isCenter) {
 	cout << char(217);
 }
 
-void moveHeader(listUrl &listSearch, listUrl &listHeader, Node *currentUrl, Node *currentHeader) {
+void moveHeader(listUrl &listSearch, listUrl &listHeader) {
 	ShowCur(0);
 	listHeader.tail->next = listHeader.head;
 	listHeader.head->prev = listHeader.tail;
 
-	Node *accumulator = currentHeader;
+	Node *accumulator = currentTab->currentHeader;
 	highline(accumulator, bgColor, textColor, true);
 
 	while(true) {
@@ -400,61 +387,66 @@ void moveHeader(listUrl &listSearch, listUrl &listHeader, Node *currentUrl, Node
 				c = _getch();
 				if(c == 77) {
 					// neu la bookmark thi danh dau lai de luc sau highline ko bi ghi de`
-					int bg = currentHeader->url == "|||\\" && currentUrl->isBookMark ? highlineColor : 1;
+					int bg = currentTab->currentHeader->url == "|||\\" && currentTab->currentUrl->isBookMark ? highlineColor : 1;
 					highline(accumulator, bg, textColor, true);
 					accumulator = accumulator->next;
 					highline(accumulator, bgColor, textColor, true);
 				} else if(c == 75) {
-					int bg = currentHeader->url == "|||\\" && currentUrl->isBookMark ? highlineColor : 1; 
+					int bg = currentTab->currentHeader->url == "|||\\" && currentTab->currentUrl->isBookMark ? highlineColor : 1; 
 					highline(accumulator, bg, textColor, true);
 					accumulator = accumulator->prev;
 					highline(accumulator, bgColor, textColor, true);
 				}
-				currentHeader = accumulator;
+				else if(c == 72) {
+					highline(accumulator, 1, textColor, true);
+					moveTab();
+				}
+				currentTab->currentHeader = accumulator;
 			} else if (c == 13) {
 				listHeader.tail->next = NULL;
 				listHeader.head->prev = NULL;
 				viewHistory = false;
 				viewBookMark = false;
 				if (accumulator->url == "<") {
-					if (currentUrl != listSearch.head) {
-						currentUrl = currentUrl->prev;
-					} else moveHeader(listSearch, listHeader, currentUrl, currentHeader);
+					if (currentTab->currentUrl != listSearch.head) {
+						currentTab->currentUrl = currentTab->currentUrl->prev;
+					} else moveHeader(listSearch, listHeader);
 				} 
 				else if (accumulator->url == ">") {
-					if (currentUrl != listSearch.tail) {
-						currentUrl = currentUrl->next;
-					} else moveHeader(listSearch, listHeader, currentUrl, currentHeader);
+					if (currentTab->currentUrl != listSearch.tail) {
+						currentTab->currentUrl = currentTab->currentUrl->next;
+					} else moveHeader(listSearch, listHeader);
 				} 
-				else if (accumulator->url == "Home" && currentUrl->url != homeName) {
+				else if (accumulator->url == "Home" && currentTab->currentUrl->url != homeName) {
 					addTail(listSearch, createNode(homeName));
-					currentUrl = currentUrl->next;
+					currentTab->currentUrl = currentTab->currentUrl->next;
 				} 
 				else if(accumulator->url == "|||\\") {
-					currentUrl->isBookMark = !currentUrl->isBookMark;
-					if(currentUrl->isBookMark)
-						addTail(listBookMark, createNode(currentUrl->url));
+					currentTab->currentUrl->isBookMark = !currentTab->currentUrl->isBookMark;
+					if(currentTab->currentUrl->isBookMark)
+						addTail(listBookMark, createNode(currentTab->currentUrl->url));
 				}
 				else if (accumulator->url == "X") {
 					ghiFile(listLS, "url.txt");
 					ghiFile(listBookMark, "bookMark.txt");
 					// khi exit thi cua so nao se hien len?
 				}
-				currentHeader = accumulator;
-				drawBrowser(listSearch, listHeader, currentUrl, currentHeader);
+				currentTab->currentHeader = accumulator;
+				drawBrowser(listSearch, listHeader);
 			}
 		}
 	}
 }
 
-void drawOption(listUrl &listHeader, Node *currentUrl, Node *currentHeader) {
+void drawOption(listUrl &listHeader) {
 	listUrl option;
 	createList(option);
 	int x = positionX[3] + 10, y = 10, w = 50, h = 2;
 	addTail(option, createNode("View History", x, y, w, h));
 	addTail(option, createNode("View BookMark", x, y + 2, w, h));
+	addTail(option, createNode("Open new tab", x, y + 2 + 2, w, h));
 	n_box(option, 1, textColor, false);
-	movePointer(option, listHeader, false, currentUrl, currentHeader);
+	movePointer(option, listHeader, false);
 }
 
 void n_box(listUrl list, int b_color, int t_color, bool isCenter) {
