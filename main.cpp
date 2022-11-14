@@ -46,9 +46,6 @@ void box(Node *header, int b_color, int t_color, bool isCenter);
 void n_box(listUrl list, int b_color, int t_color, bool isCenter);
 void highline(Node *accumulator, int b_color, int t_color, bool isCenter);
 
-void movePointer(listUrl &list, listUrl &listHeader, bool isCenter, Node *currentUrl, Node *currentHeader);
-void moveHeader(listUrl &listSearch, listUrl &listHeader, Node *currentUrl, Node *currentHeader);
-
 void createSearchBar(listUrl &listSearch, listUrl &listHeader, Node *currentUrl, Node *currentHeader);
 void Header(listUrl &listHeader, Node *currentUrl);
 
@@ -56,19 +53,26 @@ void drawList(listUrl list);
 void drawBrowser(listUrl &listSearch, listUrl &listHeader, Node *currentUrl, Node *currentHeader);
 void drawSquareTab(string content, int x, int y, bool isFocus);
 void drawOption(listUrl &listHeader, Node *currentUrl, Node *currentHeader);
-void drawTab(Tab *currentTab, int x, int y, bool isFocus);
+void drawTab();
+void drawListTab();
+
+void movePointer(listUrl &list, listUrl &listHeader, bool isCenter, Node *currentUrl, Node *currentHeader);
+void moveHeader(listUrl &listSearch, listUrl &listHeader, Node *currentUrl, Node *currentHeader);
+void moveTab();
 
 
 int main() {
 // khoi tao duy nhat 1 lan
 	set_console_size(1200, 600);
 	initVariable();
-	
 	initTab();
 	
-	drawTab(currentTab, 1, 0, true);
-	initTab();
-	drawTab(currentTab, 16, 0, true);
+
+	drawTab();
+	
+	
+//	moveTab();
+	
 	_getch();
 	return 0;
 }
@@ -97,17 +101,55 @@ void initTab() {
 	currentTab = listTab.tail;
 }
 
-void drawTab(Tab *currentTab, int x = 1, int y = 0, bool isFocus = false) {
-	Node *currentUrl = currentTab->listUrl.head;
+void drawTab() {
 	Node *currentHeader = currentTab->listHeader.head;
-	currentTab->square.x = x;
-	currentTab->square.y = y;
-	drawBrowser(currentTab->listUrl, currentTab->listHeader, currentUrl, currentHeader);
+	drawBrowser(currentTab->listUrl, currentTab->listHeader, currentTab->currentUrl, currentHeader);
+}
+
+void drawListTab() {
+	Tab *accumulator = listTab.head;
+	int x = 0, y = 0, space = 18;
+	while(accumulator != NULL) {
+		bool isCurrent = accumulator == currentTab ? true : false;
+		accumulator->square.x = x;
+		accumulator->square.y = y;
+		drawSquareTab(accumulator->currentUrl->url, accumulator->square.x, accumulator->square.y, isCurrent);
+		x += space;
+		accumulator = accumulator->next;
+	}
+}
+
+void moveTab() {
+	listTab.tail->next = listTab.head;
+	listTab.head->prev = listTab.tail;
+	drawSquareTab(currentTab->currentUrl->url, currentTab->square.x, currentTab->square.y, true);
+	while(true) {
+		if(_kbhit()) {
+			char c = _getch();
+			if(c == -32) {
+				c = _getch();
+				if(c == 77) {
+					drawSquareTab(currentTab->currentUrl->url, currentTab->square.x, currentTab->square.y, false);
+					currentTab = currentTab->next;
+					drawSquareTab(currentTab->currentUrl->url, currentTab->square.x, currentTab->square.y, true);
+				}
+				else if(c == 75) {
+					drawSquareTab(currentTab->currentUrl->url, currentTab->square.x, currentTab->square.y, false);
+					currentTab = currentTab->prev;
+					drawSquareTab(currentTab->currentUrl->url, currentTab->square.x, currentTab->square.y, true);
+				}
+			}
+			else if(c == 13) {
+				listTab.tail->next = NULL;
+				listTab.head->prev = NULL;
+			}
+		}
+	}
 }
 
 void drawBrowser(listUrl &listSearch, listUrl &listHeader, Node *currentUrl, Node *currentHeader) {
 	system("cls");
-	drawSquareTab(currentUrl->url, currentTab->square.x, currentTab->square.y, true);
+	drawListTab();
 	Header(listHeader, currentUrl);
 	if(viewHistory) {
 		drawList(listLS);

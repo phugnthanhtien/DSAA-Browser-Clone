@@ -7,6 +7,7 @@ struct Square {
 
 struct Tab {
     listUrl listUrl, listHeader;
+    Node *currentUrl;
     Square square;
     Tab *prev;
     Tab *next;
@@ -32,6 +33,7 @@ Tab *createTab(listUrl list, listUrl listHeader, int x = 0, int y = 0, int w = 0
     newTab->square.h = h;
     newTab->next = NULL;
     newTab->prev = NULL;
+    newTab->currentUrl = list.head;
     return newTab;
 }
 
