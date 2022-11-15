@@ -429,6 +429,8 @@ void moveHeader(listUrl &listSearch, listUrl &listHeader) {
 					currentTab->currentUrl->isBookMark = !currentTab->currentUrl->isBookMark;
 					if(currentTab->currentUrl->isBookMark)
 						addTail(listBookMark, createNode(currentTab->currentUrl->url));
+					else 
+						findAndDelete(listBookMark, currentTab->currentUrl->url);
 				}
 				else if (accumulator->url == "X") {
 					ghiFile(listLS, "url.txt");

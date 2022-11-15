@@ -49,18 +49,11 @@ void removeList(listUrl &list) {
 }
 
 void removeNode(listUrl &list, Node *x) {
-    if (list.head == NULL) return;
+    if (x == list.head) {
+        return;
+    }
     else {
-        if (list.head == list.tail && x == list.head) {
-            list.head = NULL;
-            list.tail = NULL;
-        }
-        else if (x == list.head) {
-            list.head = list.head->next;
-            x->next->prev = NULL;
-        }
-        else if (x == list.tail) {
-            list.tail = list.tail->prev;
+        if (x == list.tail) {
             x->prev->next = NULL;      
         }
         else {
@@ -88,5 +81,30 @@ void addTail(listUrl &list, Node*p )
 		p->prev = list.tail;
 		list.tail = p;
 	}
+}
+
+void addAfter(listUrl &list, Node* node, Node* after)
+{
+   if (after)
+   {
+      node->prev = after;
+      node->next = NULL;
+      after->next = node;
+      list.tail = node;
+   }
+   else
+      addTail(list, node);
+}
+Node* SearchNode(listUrl list, string key)
+{
+   Node *i = list.head;
+   while (i && i->url != key)
+      i = i->next;
+   return i;
+}
+void findAndDelete(listUrl &list, string key)
+{
+   Node* result = SearchNode(list, key);
+   removeNode(list, result);
 }
 
