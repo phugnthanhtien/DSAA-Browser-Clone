@@ -129,6 +129,8 @@ void moveTab() {
 					drawSquareTab(currentTab->currentUrl->url, currentTab->square.x, currentTab->square.y, true);
 				}
 				else if(c == 80) {
+					listTab.tail->next = NULL;
+					listTab.head->prev = NULL;
 					moveHeader(currentTab->listUrl, currentTab->listHeader);
 				}
 			}
@@ -398,6 +400,8 @@ void moveHeader(listUrl &listSearch, listUrl &listHeader) {
 					highline(accumulator, bgColor, textColor, true);
 				}
 				else if(c == 72) {
+					listHeader.tail->next = NULL;
+					listHeader.head->prev = NULL;
 					highline(accumulator, 1, textColor, true);
 					moveTab();
 				}
