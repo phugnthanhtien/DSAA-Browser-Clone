@@ -416,12 +416,12 @@ void moveHeader(listUrl &listSearch, listUrl &listHeader) {
 				viewHistory = false;
 				viewBookMark = false;
 				if (accumulator->url == "<") {
-					if (currentTab->currentUrl != listSearch.head) {
+					if (currentTab->currentUrl != currentTab->listUrl.head) {
 						currentTab->currentUrl = currentTab->currentUrl->prev;
 					} else moveHeader(listSearch, listHeader);
 				} 
 				else if (accumulator->url == ">") {
-					if (currentTab->currentUrl != listSearch.tail) {
+					if (currentTab->currentUrl != currentTab->listUrl.tail) {
 						currentTab->currentUrl = currentTab->currentUrl->next;
 					} else moveHeader(listSearch, listHeader);
 				} 
