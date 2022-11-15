@@ -83,3 +83,28 @@ void addTail(listUrl &list, Node*p )
 	}
 }
 
+void addAfter(listUrl &list, Node* node, Node* after)
+{
+   if (after)
+   {
+      node->prev = after;
+      node->next = NULL;
+      after->next = node;
+      list.tail = node;
+   }
+   else
+      addTail(list, node);
+}
+Node* SearchNode(listUrl list, string key)
+{
+   Node *i = list.head;
+   while (i && i->url != key)
+      i = i->next;
+   return i;
+}
+void findAndDelete(listUrl &list, string key)
+{
+   Node* result = SearchNode(list, key);
+   removeNode(list, result);
+}
+

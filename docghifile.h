@@ -5,7 +5,7 @@
 
 using namespace std;
 
-void docFile(listUrl &list, string fileName, int x, int y, int w, int h) {  
+void docFile(listUrl &list, string fileName, int x = 0, int y = 0, int w = 0, int h = 0) {  
     ifstream infile(fileName);
     string temp;
     int i = 0;
