@@ -187,7 +187,7 @@ void createSearchBar(listUrl &listSearch,listUrl &listHeader) {
 				textcolor(15);
 				getline(cin, search);
 				if(search != "") {
-					addTail(listSearch, createNode(search));
+					addAfter(listSearch, createNode(search), currentTab->currentUrl);
 					addTail(listLS, createNode(search));
 					currentTab->currentUrl = currentTab->currentUrl->next;
 					drawBrowser();
