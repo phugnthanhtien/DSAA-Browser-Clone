@@ -4,6 +4,7 @@
 #include  "Tab.h"
 #include "docghifile.h"
 #include "content.h"
+#include "vebackground.h"
 #define MAX 100
 #define outlinecolor 11
 
@@ -161,6 +162,9 @@ void drawBrowser() {
 	}
 	else {
 		ascii_art(currentTab->currentUrl->url, xT, yT, t_color);
+		if(currentTab->currentUrl->url == homeName) {
+			drawBR();
+		}
 		if(currentTab->currentUrl->url == homeName || currentTab->currentHeader->x == positionX[3]) { 
 			createSearchBar(currentTab->listUrl, currentTab->listHeader);
 		}
