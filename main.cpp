@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include "mylib.h"
-#include  "Tab.h"
+#include "Tab.h"
 #include "docghifile.h"
 #include "content.h"
 #include "vebackground.h"
@@ -22,21 +22,20 @@ listUrl listBookMark;
 LTab listTab;
 Tab *currentTab;
 
-
 int xT = 30;
 int yT = 10;
 int t_color = 12;
 
-//Node *currentBookMark;
+// Node *currentBookMark;
 
-//ASCII arrow
-// up: 72
-// down: 80
-// left: 75
-// right: 77
-// space: 32
-// enter: 13
-// ESC: 27
+// ASCII arrow
+//  up: 72
+//  down: 80
+//  left: 75
+//  right: 77
+//  space: 32
+//  enter: 13
+//  ESC: 27
 
 void initVariable();
 void initHeader(listUrl &listHeader);
@@ -60,47 +59,51 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter);
 void moveHeader(listUrl &listSearch, listUrl &listHeader);
 void moveTab();
 
-
-int main() {
-// khoi tao duy nhat 1 lan
+int main()
+{
+	// khoi tao duy nhat 1 lan
 	set_console_size(1200, 600);
 	initVariable();
 	initTab();
-	
+
 	drawBrowser();
-	
+
 	_getch();
 	return 0;
 }
 
-void initVariable() {
+void initVariable()
+{
 	createList(listBookMark);
 	createList(listLS);
 	docFile(listBookMark, "bookMark.txt");
 	docFile(listLS, "url.txt");
-	initListTab(listTab);	
+	initListTab(listTab);
 }
 
-void initTab() {
-	//Header
+void initTab()
+{
+	// Header
 	listUrl listHeader;
 	createList(listHeader);
 	initHeader(listHeader);
-	
-	//listSearch
+
+	// listSearch
 	listUrl listSearch;
 	createList(listSearch);
 	addTail(listSearch, createNode(homeName));
-	
+
 	// init new Tab with new listUrl
 	addTab(listTab, createTab(listSearch, listHeader));
 	currentTab = listTab.tail;
 }
 
-void drawListTab() {
+void drawListTab()
+{
 	Tab *accumulator = listTab.head;
 	int x = 1, y = 0, space = 18;
-	while(accumulator != NULL) {
+	while (accumulator != NULL)
+	{
 		bool isCurrent = accumulator == currentTab ? true : false;
 		accumulator->square.x = x;
 		accumulator->square.y = y;
@@ -110,32 +113,54 @@ void drawListTab() {
 	}
 }
 
-void moveTab() {
+void moveTab()
+{
 	listTab.tail->next = listTab.head;
 	listTab.head->prev = listTab.tail;
 	drawSquareTab(currentTab->currentUrl->url, currentTab->square.x, currentTab->square.y, true);
-	while(true) {
-		if(_kbhit()) {
+	while (true)
+	{
+		if (_kbhit())
+		{
 			char c = _getch();
-			if(c == -32) {
+			if (c == -32)
+			{
 				c = _getch();
-				if(c == 77) {
+				if (c == 77)
+				{
 					drawSquareTab(currentTab->currentUrl->url, currentTab->square.x, currentTab->square.y, false);
 					currentTab = currentTab->next;
 					drawSquareTab(currentTab->currentUrl->url, currentTab->square.x, currentTab->square.y, true);
 				}
-				else if(c == 75) {
+				else if (c == 75)
+				{
 					drawSquareTab(currentTab->currentUrl->url, currentTab->square.x, currentTab->square.y, false);
 					currentTab = currentTab->prev;
 					drawSquareTab(currentTab->currentUrl->url, currentTab->square.x, currentTab->square.y, true);
 				}
-				else if(c == 80) {
+				else if (c == 80)
+				{
 					listTab.tail->next = NULL;
 					listTab.head->prev = NULL;
 					moveHeader(currentTab->listUrl, currentTab->listHeader);
 				}
 			}
-			else if(c == 13) {
+			else if (c == 8)
+			{
+				listTab.tail->next = NULL;
+				listTab.head->prev = NULL;
+				Tab *temp;
+				if (currentTab == listTab.tail)
+					temp = currentTab->prev;
+				else
+					temp = currentTab->next;
+				deleteTab(listTab, currentTab);
+				currentTab = temp;
+				drawSquareTab(currentTab->currentUrl->url, currentTab->square.x, currentTab->square.y, true);
+				drawBrowser();
+			}
+			else if (c == 13)
+			{
 				listTab.tail->next = NULL;
 				listTab.head->prev = NULL;
 				drawBrowser();
@@ -144,53 +169,69 @@ void moveTab() {
 	}
 }
 
-void drawBrowser() {
+void drawBrowser()
+{
 	system("cls");
 	drawListTab();
 	Header(currentTab->listHeader);
-	if(viewHistory) {
+	if (viewHistory)
+	{
 		drawList(listLS);
 		movePointer(listLS, currentTab->listHeader, false);
 	}
-	else if(viewBookMark) {
+	else if (viewBookMark)
+	{
 		drawList(listBookMark);
 		movePointer(listBookMark, currentTab->listHeader, false);
-	} 
-	
-	if(currentTab->currentHeader->url == "Option") {
+	}
+
+	if (currentTab->currentHeader->url == "Option")
+	{
 		drawOption(currentTab->listHeader);
 	}
-	else {
+	else
+	{
 		ascii_art(currentTab->currentUrl->url, xT, yT, t_color);
-		if(currentTab->currentUrl->url == homeName) {
+		if (currentTab->currentUrl->url == homeName)
+		{
 			drawBR();
 		}
-		if(currentTab->currentUrl->url == homeName || currentTab->currentHeader->x == positionX[3]) { 
+		if (currentTab->currentUrl->url == homeName || currentTab->currentHeader->x == positionX[3])
+		{
 			createSearchBar(currentTab->listUrl, currentTab->listHeader);
 		}
-		else {
+		else
+		{
 			moveHeader(currentTab->listUrl, currentTab->listHeader);
 		}
 	}
 }
 
-void createSearchBar(listUrl &listSearch,listUrl &listHeader) {
+void createSearchBar(listUrl &listSearch, listUrl &listHeader)
+{
 	box(createNode("", 42, 19, 50, 2), 0, 3, false);
 	gotoXY(43, 20);
 	ShowCur(1);
 	string search;
-	while(true) {
-		if(_kbhit()) {
+	while (true)
+	{
+		if (_kbhit())
+		{
 			char c = _getch();
-			if(c == -32) {
+			if (c == -32)
+			{
 				c = _getch();
-				if(c == 72) {
+				if (c == 72)
+				{
 					moveHeader(listSearch, listHeader);
 				}
-			} else {
+			}
+			else
+			{
 				textcolor(15);
 				getline(cin, search);
-				if(search != "") {
+				if (search != "")
+				{
 					addAfter(listSearch, createNode(search), currentTab->currentUrl);
 					addTail(listLS, createNode(search));
 					currentTab->currentUrl = currentTab->currentUrl->next;
@@ -201,21 +242,25 @@ void createSearchBar(listUrl &listSearch,listUrl &listHeader) {
 	}
 }
 
-void drawList(listUrl list) {
-	if (list.head != NULL) {
+void drawList(listUrl list)
+{
+	if (list.head != NULL)
+	{
 		Node *accumulator = list.head;
 		int i = 0;
 		int x = 1, y = 6, w = 101, h = 2;
-		while(accumulator != NULL) {
+		while (accumulator != NULL)
+		{
 			accumulator->x = x;
-			accumulator->y = y + (i*2);
+			accumulator->y = y + (i * 2);
 			accumulator->w = w;
 			accumulator->h = h;
 			box(accumulator, 1, textColor, false);
-			if (i != 0) {
+			if (i != 0)
+			{
 				gotoXY(accumulator->x, accumulator->y);
 				cout << char(195);
-				gotoXY(accumulator->x +accumulator-> w, accumulator->y);
+				gotoXY(accumulator->x + accumulator->w, accumulator->y);
 				cout << char(180);
 			}
 			i++;
@@ -224,74 +269,91 @@ void drawList(listUrl list) {
 	}
 }
 
-void movePointer(listUrl &list, listUrl &listHeader, bool isCenter) {
+void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
+{
 	ShowCur(0);
-	if (list.head != NULL) {
-	list.tail->next = list.head;
-	list.head->prev = list.tail;
+	if (list.head != NULL)
+	{
+		list.tail->next = list.head;
+		list.head->prev = list.tail;
 
-	Node *accumulator = list.head;
-	highline(accumulator, bgColor, textColor, isCenter);
+		Node *accumulator = list.head;
+		highline(accumulator, bgColor, textColor, isCenter);
 
-	while(true) {
-		if(_kbhit()) {
-			char c = _getch();
-			if(c == -32) {
-				c = _getch();
-				if(c == 80) {
-					highline(accumulator, 1, textColor, isCenter);
-					accumulator = accumulator->next;
-					highline(accumulator, bgColor, textColor, isCenter);
-
-				} else if(c == 72) {
-					highline(accumulator, 1, textColor, isCenter);
-					if(accumulator == list.head) {
-						list.tail->next = NULL;
-						list.head->prev = NULL;
-						moveHeader(list, listHeader);
-					} 
-					else {
-						accumulator = accumulator->prev;
+		while (true)
+		{
+			if (_kbhit())
+			{
+				char c = _getch();
+				if (c == -32)
+				{
+					c = _getch();
+					if (c == 80)
+					{
+						highline(accumulator, 1, textColor, isCenter);
+						accumulator = accumulator->next;
 						highline(accumulator, bgColor, textColor, isCenter);
 					}
+					else if (c == 72)
+					{
+						highline(accumulator, 1, textColor, isCenter);
+						if (accumulator == list.head)
+						{
+							list.tail->next = NULL;
+							list.head->prev = NULL;
+							moveHeader(list, listHeader);
+						}
+						else
+						{
+							accumulator = accumulator->prev;
+							highline(accumulator, bgColor, textColor, isCenter);
+						}
+					}
 				}
-			}
-			else if (c == 8) {
-				if (viewHistory) {
-					listLS.tail->next = NULL;
-					listLS.head->prev = NULL;
-					removeNode(listLS, accumulator);
+				else if (c == 8)
+				{
+					if (viewHistory)
+					{
+						listLS.tail->next = NULL;
+						listLS.head->prev = NULL;
+						removeNode(listLS, accumulator);
+						drawBrowser();
+					}
+					else if (viewBookMark)
+					{
+						listBookMark.tail->next = NULL;
+						listBookMark.head->prev = NULL;
+						removeNode(listBookMark, accumulator);
+						drawBrowser();
+					}
+				}
+				else if (c == 13)
+				{
+					list.tail->next = NULL;
+					list.head->prev = NULL;
+					if (accumulator == list.head)
+					{
+						viewHistory = true;
+						viewBookMark = false;
+					}
+					else if (accumulator == list.head->next)
+					{
+						viewHistory = false;
+						viewBookMark = true;
+					}
+					else if (accumulator == list.tail)
+					{
+						initTab();
+					}
 					drawBrowser();
 				}
-				else if (viewBookMark) {
-					listBookMark.tail->next = NULL;
-					listBookMark.head->prev = NULL;
-					removeNode(listBookMark, accumulator);
-					drawBrowser();
-				}
-			}
-			else if (c == 13) {
-				list.tail->next = NULL;
-				list.head->prev = NULL;
-				if (accumulator == list.head) {
-					viewHistory = true;
-					viewBookMark = false;
-				} 
-				else if(accumulator == list.head->next) {
-					viewHistory = false;
-					viewBookMark = true;
-				}
-				else if(accumulator == list.tail) {
-					initTab();
-				}
-				drawBrowser();
 			}
 		}
 	}
-	}
 }
 
-void initHeader(listUrl &listHeader) {
+void initHeader(listUrl &listHeader)
+{
 	ShowCur(0);
 	int start_x = 1;
 	int start_y = 2;
@@ -302,7 +364,8 @@ void initHeader(listUrl &listHeader) {
 
 	int widthElement[7] = {width, width, width + 1, width + 65, width + 4, width + 4, width};
 	positionX[0] = start_x;
-	for (int i = 1; i < 7; i++) {
+	for (int i = 1; i < 7; i++)
+	{
 		positionX[i] = positionX[i - 1] + widthElement[i - 1] + space;
 	}
 	createList(listHeader);
@@ -315,35 +378,45 @@ void initHeader(listUrl &listHeader) {
 	addTail(listHeader, createNode("X", positionX[6], start_y, widthElement[6], height));
 }
 
-void Header(listUrl &listHeader) {
+void Header(listUrl &listHeader)
+{
 	Node *accumulator = listHeader.head;
-	while(accumulator != NULL) {
-		if(accumulator->x == positionX[3]) {
+	while (accumulator != NULL)
+	{
+		if (accumulator->x == positionX[3])
+		{
 			accumulator->url = currentTab->currentUrl->url;
 		}
 		box(accumulator, 1, textColor, true);
-		if(accumulator->x == positionX[4] && currentTab->currentUrl->isBookMark) {
+		if (accumulator->x == positionX[4] && currentTab->currentUrl->isBookMark)
+		{
 			highline(accumulator, highlineColor, textColor, true);
 		}
 		accumulator = accumulator->next;
 	}
 }
 
-void box(Node *header, int b_color, int t_color, bool isCenter) {
+void box(Node *header, int b_color, int t_color, bool isCenter)
+{
 	textcolor(b_color);
-	for (int iy = header->y + 1; iy <= header->y + header->h - 1; iy++) {
-		for (int ix = header->x + 1; ix <= header->x + header->w - 1; ix++) {
+	for (int iy = header->y + 1; iy <= header->y + header->h - 1; iy++)
+	{
+		for (int ix = header->x + 1; ix <= header->x + header->w - 1; ix++)
+		{
 			gotoXY(ix, iy);
 			cout << " ";
 		}
 	}
 
-	if (isCenter) {
+	if (isCenter)
+	{
 		int position = header->w / 2 + header->x - header->url.length() / 2;
 		gotoXY(header->url.length() % 2 != 1 ? position + 1 : position, header->h / 2 + header->y);
 		SetColor(t_color);
 		cout << header->url;
-	} else {
+	}
+	else
+	{
 		gotoXY(header->x + 1, header->y + 1);
 		SetColor(t_color);
 		cout << header->url;
@@ -356,13 +429,15 @@ void box(Node *header, int b_color, int t_color, bool isCenter) {
 	if (header->w < 1 || header->h < 1)
 		return;
 
-	for (int i = header->x; i < header->x + header->w; i++) {
+	for (int i = header->x; i < header->x + header->w; i++)
+	{
 		gotoXY(i, header->y);
 		cout << char(196);
 		gotoXY(i, header->y + header->h);
 		cout << char(196);
 	}
-	for (int j = header->y; j <= header->y + header->h; j++) {
+	for (int j = header->y; j <= header->y + header->h; j++)
+	{
 		gotoXY(header->x, j);
 		cout << char(179);
 		gotoXY(header->x + header->w, j);
@@ -378,7 +453,8 @@ void box(Node *header, int b_color, int t_color, bool isCenter) {
 	cout << char(217);
 }
 
-void moveHeader(listUrl &listSearch, listUrl &listHeader) {
+void moveHeader(listUrl &listSearch, listUrl &listHeader)
+{
 	ShowCur(0);
 	listHeader.tail->next = listHeader.head;
 	listHeader.head->prev = listHeader.tail;
@@ -386,57 +462,77 @@ void moveHeader(listUrl &listSearch, listUrl &listHeader) {
 	Node *accumulator = currentTab->currentHeader;
 	highline(accumulator, bgColor, textColor, true);
 
-	while(true) {
-		if(_kbhit()) {
+	while (true)
+	{
+		if (_kbhit())
+		{
 			char c = _getch();
-			if(c == -32) {
+			if (c == -32)
+			{
 				c = _getch();
-				if(c == 77) {
+				if (c == 77)
+				{
 					// neu la bookmark thi danh dau lai de luc sau highline ko bi ghi de`
 					int bg = currentTab->currentHeader->url == "|||\\" && currentTab->currentUrl->isBookMark ? highlineColor : 1;
 					highline(accumulator, bg, textColor, true);
 					accumulator = accumulator->next;
 					highline(accumulator, bgColor, textColor, true);
-				} else if(c == 75) {
-					int bg = currentTab->currentHeader->url == "|||\\" && currentTab->currentUrl->isBookMark ? highlineColor : 1; 
+				}
+				else if (c == 75)
+				{
+					int bg = currentTab->currentHeader->url == "|||\\" && currentTab->currentUrl->isBookMark ? highlineColor : 1;
 					highline(accumulator, bg, textColor, true);
 					accumulator = accumulator->prev;
 					highline(accumulator, bgColor, textColor, true);
 				}
-				else if(c == 72) {
+				else if (c == 72)
+				{
 					listHeader.tail->next = NULL;
 					listHeader.head->prev = NULL;
 					highline(accumulator, 1, textColor, true);
 					moveTab();
 				}
 				currentTab->currentHeader = accumulator;
-			} else if (c == 13) {
+			}
+			else if (c == 13)
+			{
 				listHeader.tail->next = NULL;
 				listHeader.head->prev = NULL;
 				viewHistory = false;
 				viewBookMark = false;
-				if (accumulator->url == "<") {
-					if (currentTab->currentUrl != currentTab->listUrl.head) {
+				if (accumulator->url == "<")
+				{
+					if (currentTab->currentUrl != currentTab->listUrl.head)
+					{
 						currentTab->currentUrl = currentTab->currentUrl->prev;
-					} else moveHeader(listSearch, listHeader);
-				} 
-				else if (accumulator->url == ">") {
-					if (currentTab->currentUrl != currentTab->listUrl.tail) {
+					}
+					else
+						moveHeader(listSearch, listHeader);
+				}
+				else if (accumulator->url == ">")
+				{
+					if (currentTab->currentUrl != currentTab->listUrl.tail)
+					{
 						currentTab->currentUrl = currentTab->currentUrl->next;
-					} else moveHeader(listSearch, listHeader);
-				} 
-				else if (accumulator->url == "Home" && currentTab->currentUrl->url != homeName) {
+					}
+					else
+						moveHeader(listSearch, listHeader);
+				}
+				else if (accumulator->url == "Home" && currentTab->currentUrl->url != homeName)
+				{
 					addTail(listSearch, createNode(homeName));
 					currentTab->currentUrl = currentTab->currentUrl->next;
-				} 
-				else if(accumulator->url == "|||\\") {
+				}
+				else if (accumulator->url == "|||\\")
+				{
 					currentTab->currentUrl->isBookMark = !currentTab->currentUrl->isBookMark;
-					if(currentTab->currentUrl->isBookMark)
+					if (currentTab->currentUrl->isBookMark)
 						addTail(listBookMark, createNode(currentTab->currentUrl->url));
-					else 
+					else
 						findAndDelete(listBookMark, currentTab->currentUrl->url);
 				}
-				else if (accumulator->url == "X") {
+				else if (accumulator->url == "X")
+				{
 					ghiFile(listLS, "url.txt");
 					ghiFile(listBookMark, "bookMark.txt");
 					// khi exit thi cua so nao se hien len?
@@ -448,7 +544,8 @@ void moveHeader(listUrl &listSearch, listUrl &listHeader) {
 	}
 }
 
-void drawOption(listUrl &listHeader) {
+void drawOption(listUrl &listHeader)
+{
 	listUrl option;
 	createList(option);
 	int x = positionX[3] + 10, y = 10, w = 50, h = 2;
@@ -459,15 +556,18 @@ void drawOption(listUrl &listHeader) {
 	movePointer(option, listHeader, false);
 }
 
-void n_box(listUrl list, int b_color, int t_color, bool isCenter) {
+void n_box(listUrl list, int b_color, int t_color, bool isCenter)
+{
 	Node *accumulator = list.head;
 	int i = 0;
-	while(accumulator != NULL) {
+	while (accumulator != NULL)
+	{
 		box(accumulator, 1, textColor, false);
-		if (i != 0) {
+		if (i != 0)
+		{
 			gotoXY(accumulator->x, accumulator->y);
 			cout << char(195);
-			gotoXY(accumulator->x +accumulator-> w, accumulator->y);
+			gotoXY(accumulator->x + accumulator->w, accumulator->y);
 			cout << char(180);
 		}
 		i++;
@@ -475,20 +575,26 @@ void n_box(listUrl list, int b_color, int t_color, bool isCenter) {
 	}
 }
 
-void highline(Node *accumulator, int b_color, int t_color, bool isCenter) {
+void highline(Node *accumulator, int b_color, int t_color, bool isCenter)
+{
 	textcolor(b_color);
-	for (int iy = accumulator->y + 1; iy <= accumulator->y + accumulator->h - 1; iy++) {
-		for (int ix = accumulator->x + 1; ix <= accumulator->x + accumulator->w - 1; ix++) {
+	for (int iy = accumulator->y + 1; iy <= accumulator->y + accumulator->h - 1; iy++)
+	{
+		for (int ix = accumulator->x + 1; ix <= accumulator->x + accumulator->w - 1; ix++)
+		{
 			gotoXY(ix, iy);
 			cout << " ";
 		}
 	}
-	if (isCenter) {
+	if (isCenter)
+	{
 		int position = accumulator->w / 2 + accumulator->x - accumulator->url.length() / 2;
 		gotoXY(accumulator->url.length() % 2 != 1 ? position + 1 : position, accumulator->h / 2 + accumulator->y);
 		SetColor(t_color);
 		cout << accumulator->url;
-	} else {
+	}
+	else
+	{
 		gotoXY(accumulator->x + 1, accumulator->y + 1);
 		SetColor(t_color);
 		cout << accumulator->url;
@@ -497,23 +603,30 @@ void highline(Node *accumulator, int b_color, int t_color, bool isCenter) {
 	ShowCur(0);
 }
 
-void drawSquareTab(string content, int x = 0, int y = 0, bool isFocus = false) {
+void drawSquareTab(string content, int x = 0, int y = 0, bool isFocus = false)
+{
 	int sizeTab = 15;
 	int text = isFocus ? 14 : textColor;
-	for(int i=0; i< sizeTab; i++) {
-		for(int j = 0; j<2; j++) {
-			if(j == 0) {
+	for (int i = 0; i < sizeTab; i++)
+	{
+		for (int j = 0; j < 2; j++)
+		{
+			if (j == 0)
+			{
 				textcolor(outlinecolor);
 				gotoXY(x + i, y);
-				i == sizeTab - 1 ?  cout << " x" : cout << char(196);
+				i == sizeTab - 1 ? cout << " x" : cout << char(196);
 			}
-			else {
+			else
+			{
 				gotoXY(x + 1, y + j);
-				if(content.size() > sizeTab - 5) {
+				if (content.size() > sizeTab - 5)
+				{
 					textcolor(text);
 					cout << content.substr(0, sizeTab - 5) + ".. ";
 				}
-				else {
+				else
+				{
 					textcolor(text);
 					cout << content << string(sizeTab - content.size() - 2, ' ');
 				}

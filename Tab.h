@@ -52,19 +52,23 @@ void addTab(LTab &listTab, Tab *newTab){
 
 void deleteTab(LTab &listTab, Tab *currentTab) {
 	if(listTab.head == NULL) return;
-	if(listTab.head == currentTab && listTab.tail == currentTab) {
-		initListTab(listTab);
-		delete currentTab;
-	}
 	else {
-		if(listTab.head == currentTab) {
+        if(listTab.head == listTab.tail && currentTab == listTab.tail) {
+            listTab.head = NULL;
+            listTab.tail = NULL;
+        }
+		else if(currentTab == listTab.head) {
 			listTab.head = listTab.head->next;
+            currentTab->next->prev = NULL;
 		}
-		else {
-			currentTab->prev->next = currentTab->next;
-			if(currentTab == listTab.tail) 
-				listTab.tail = currentTab->prev;
+		else if (currentTab == listTab.tail) {
+			listTab.tail = listTab.tail->prev;
+            currentTab->prev->next = NULL;
 		}
+        else {
+            currentTab->prev->next = currentTab->next;
+            currentTab->next->prev = currentTab->prev;
+        }
 		delete currentTab;
 	}
 }
