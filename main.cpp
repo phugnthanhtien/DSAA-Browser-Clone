@@ -50,7 +50,7 @@ void createSearchBar(listUrl &listSearch, listUrl &listHeader);
 void Header(listUrl &listHeader);
 
 void drawList(listUrl list);
-void drawBrowser(listUrl &listSearch, listUrl &listHeader);
+void drawBrowser();
 void drawSquareTab(string content, int x, int y, bool isFocus);
 void drawOption(listUrl &listHeader);
 void drawListTab();
@@ -66,7 +66,7 @@ int main() {
 	initVariable();
 	initTab();
 	
-	drawBrowser(currentTab->listUrl, currentTab->listHeader);
+	drawBrowser();
 	
 	_getch();
 	return 0;
@@ -137,35 +137,35 @@ void moveTab() {
 			else if(c == 13) {
 				listTab.tail->next = NULL;
 				listTab.head->prev = NULL;
-				drawBrowser(currentTab->listUrl, currentTab->listHeader);
+				drawBrowser();
 			}
 		}
 	}
 }
 
-void drawBrowser(listUrl &listSearch, listUrl &listHeader) {
+void drawBrowser() {
 	system("cls");
 	drawListTab();
-	Header(listHeader);
+	Header(currentTab->listHeader);
 	if(viewHistory) {
 		drawList(listLS);
-		movePointer(listLS, listHeader, false);
+		movePointer(listLS, currentTab->listHeader, false);
 	}
 	else if(viewBookMark) {
 		drawList(listBookMark);
-		movePointer(listBookMark, listHeader, false);
+		movePointer(listBookMark, currentTab->listHeader, false);
 	} 
 	
 	if(currentTab->currentHeader->url == "Option") {
-		drawOption(listHeader);
+		drawOption(currentTab->listHeader);
 	}
 	else {
 		ascii_art(currentTab->currentUrl->url, xT, yT, t_color);
 		if(currentTab->currentUrl->url == homeName || currentTab->currentHeader->x == positionX[3]) { 
-			createSearchBar(listSearch, listHeader);
+			createSearchBar(currentTab->listUrl, currentTab->listHeader);
 		}
 		else {
-			moveHeader(listSearch, listHeader);
+			moveHeader(currentTab->listUrl, currentTab->listHeader);
 		}
 	}
 }
@@ -190,7 +190,7 @@ void createSearchBar(listUrl &listSearch,listUrl &listHeader) {
 					addTail(listSearch, createNode(search));
 					addTail(listLS, createNode(search));
 					currentTab->currentUrl = currentTab->currentUrl->next;
-					drawBrowser(listSearch, listHeader);
+					drawBrowser();
 				}
 			}
 		}
@@ -257,13 +257,13 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter) {
 					listLS.tail->next = NULL;
 					listLS.head->prev = NULL;
 					removeNode(listLS, accumulator);
-					drawBrowser(list, listHeader);
+					drawBrowser();
 				}
 				else if (viewBookMark) {
 					listBookMark.tail->next = NULL;
 					listBookMark.head->prev = NULL;
 					removeNode(listBookMark, accumulator);
-					drawBrowser(list, listHeader);
+					drawBrowser();
 				}
 			}
 			else if (c == 13) {
@@ -280,7 +280,7 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter) {
 				else if(accumulator == list.tail) {
 					initTab();
 				}
-				drawBrowser(list, listHeader);
+				drawBrowser();
 			}
 		}
 	}
@@ -436,7 +436,7 @@ void moveHeader(listUrl &listSearch, listUrl &listHeader) {
 					// khi exit thi cua so nao se hien len?
 				}
 				currentTab->currentHeader = accumulator;
-				drawBrowser(listSearch, listHeader);
+				drawBrowser();
 			}
 		}
 	}
