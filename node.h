@@ -120,6 +120,6 @@ Node* SearchNode(listUrl list, string key)
 void findAndDelete(listUrl &list, string key)
 {
    Node* result = SearchNode(list, key);
-   removeNode(list, result);
+   if (result) removeNode(list, result);
 }
 
