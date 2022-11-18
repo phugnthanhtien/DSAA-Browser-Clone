@@ -209,7 +209,7 @@ void drawBrowser()
 
 void createSearchBar(listUrl &listSearch, listUrl &listHeader)
 {
-	box(createNode("", 42, 19, 50, 2), 0, 3, false);
+	box(createNode("", "", 42, 19, 50, 2), 0, 3, false);
 	gotoXY(43, 20);
 	ShowCur(1);
 	string search;
@@ -246,11 +246,25 @@ void drawList(listUrl list)
 {
 	if (list.head != NULL)
 	{
+		gotoXY(15, 6);
+		cout << "XOA LICH SU : NHAN PHIM BACKSPACE" << endl;
+		gotoXY(15, 7);
+		cout << "XOA TOAN BO LICH SU: NHAN PHIM DELETE" << endl;
 		Node *accumulator = list.head;
 		int i = 0;
-		int x = 1, y = 6, w = 101, h = 2;
+		int x = 1, y = 9, w = 101, h = 2;
+		gotoXY(0, 8);
+		cout << list.head->dmy;
+		string cur_dmy = list.head->dmy;
 		while (accumulator != NULL)
 		{
+			if (accumulator->dmy != cur_dmy)
+			{
+				gotoXY(3, y + i*2);
+				cout << endl << accumulator->dmy << endl << endl;
+				cur_dmy = accumulator->dmy;
+				i+=1;
+			}
 			accumulator->x = x;
 			accumulator->y = y + (i * 2);
 			accumulator->w = w;
@@ -369,13 +383,13 @@ void initHeader(listUrl &listHeader)
 		positionX[i] = positionX[i - 1] + widthElement[i - 1] + space;
 	}
 	createList(listHeader);
-	addTail(listHeader, createNode("<", positionX[0], start_y, widthElement[0], height));
-	addTail(listHeader, createNode(">", positionX[1], start_y, widthElement[1], height));
-	addTail(listHeader, createNode("Home", positionX[2], start_y, widthElement[2], height));
-	addTail(listHeader, createNode(homeName, positionX[3], start_y, widthElement[3], height));
-	addTail(listHeader, createNode("|||\\", positionX[4], start_y, widthElement[4], height));
-	addTail(listHeader, createNode("Option", positionX[5], start_y, widthElement[5], height));
-	addTail(listHeader, createNode("X", positionX[6], start_y, widthElement[6], height));
+	addTail(listHeader, createNode("<", "", positionX[0], start_y, widthElement[0], height));
+	addTail(listHeader, createNode(">", "", positionX[1], start_y, widthElement[1], height));
+	addTail(listHeader, createNode("Home", "", positionX[2], start_y, widthElement[2], height));
+	addTail(listHeader, createNode(homeName, "", positionX[3], start_y, widthElement[3], height));
+	addTail(listHeader, createNode("|||\\", "", positionX[4], start_y, widthElement[4], height));
+	addTail(listHeader, createNode("Option", "", positionX[5], start_y, widthElement[5], height));
+	addTail(listHeader, createNode("X", "", positionX[6], start_y, widthElement[6], height));
 }
 
 void Header(listUrl &listHeader)
@@ -549,9 +563,9 @@ void drawOption(listUrl &listHeader)
 	listUrl option;
 	createList(option);
 	int x = positionX[3] + 10, y = 10, w = 50, h = 2;
-	addTail(option, createNode("View History", x, y, w, h));
-	addTail(option, createNode("View BookMark", x, y + 2, w, h));
-	addTail(option, createNode("Open new tab", x, y + 2 + 2, w, h));
+	addTail(option, createNode("View History", "", x, y, w, h));
+	addTail(option, createNode("View BookMark", "", x, y + 2, w, h));
+	addTail(option, createNode("Open new tab", "", x, y + 2 + 2, w, h));
 	n_box(option, 1, textColor, false);
 	movePointer(option, listHeader, false);
 }

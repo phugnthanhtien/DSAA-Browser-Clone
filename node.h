@@ -4,7 +4,7 @@
 using namespace std;
 
 struct Node {
-    string url;
+    string url, dmy;
 	int x, y, w, h;
 	bool isBookMark = false;
     Node *prev, *next;
@@ -14,12 +14,20 @@ struct listUrl {
     Node *head, *tail;
 };
 
-Node *createNode(string data, int x = 0, int y = 0, int w = 0, int h = 0) {
+Node *createNode(string data, string dmy = "", int x = 0, int y = 0, int w = 0, int h = 0) {
+    time_t now = time(0);
+    tm *ltm = localtime(&now);
+    int year = 1900 + ltm->tm_year;
+    int month = 1 + ltm->tm_mon;
+    int day = ltm->tm_mday;
+    if (dmy == "") 
+        dmy = to_string(day) + "/" + to_string(month) + "/" + to_string(year);
     Node *p = new Node;
     if (p == NULL)
         return NULL;
     else {
         p->url = data;
+        p->dmy = dmy;
         p->x = x;
 		p->y = y;
 		p->w = w;
@@ -35,7 +43,7 @@ void createList(listUrl &list) {
 
 void browseNext(listUrl list) {
    for (Node*i = list.head; i; i = i->next) {
-      cout << i->url << endl;
+      cout << i->url  << " " << i->dmy << endl;
    }
 }
 
@@ -112,6 +120,6 @@ Node* SearchNode(listUrl list, string key)
 void findAndDelete(listUrl &list, string key)
 {
    Node* result = SearchNode(list, key);
-   removeNode(list, result);
+   if (result) removeNode(list, result);
 }
 
