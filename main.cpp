@@ -22,6 +22,7 @@ listUrl listLS;
 listUrl listBookMark;
 LTab listTab;
 Tab *currentTab;
+Node* temp_Delete = NULL;
 FNode *root = createFNode("ROOT");
 
 
@@ -63,6 +64,7 @@ void drawBrowser();
 void drawSquareTab(string content, int x, int y, bool isFocus);
 void drawOption(listUrl &listHeader);
 void drawListTab();
+void drawDeleLS(listUrl &listLS, string key);
 void drawFolder(FNode *current);
 void drawFavorite(FNode *current);
 
@@ -317,7 +319,6 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 	{
 		list.tail->next = list.head;
 		list.head->prev = list.tail;
-
 		Node *accumulator = list.head;
 		highline(accumulator, bgColor, textColor, isCenter);
 
@@ -352,10 +353,20 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 					}
 					else if (c == 83)
 					{
-						listLS.tail->next = NULL;
-						listLS.head->prev = NULL;
-						removeAllNode(listLS);
-						drawBrowser();
+						if(viewHistory)
+						{
+							listLS.tail->next = NULL;
+							listLS.head->prev = NULL;
+							removeAllNode(listLS);
+							drawBrowser();
+						}
+						else if (viewBookMark)
+						{
+							listBookMark.tail->next = NULL;
+							listBookMark.head->prev = NULL;
+							removeAllNode(listBookMark);
+							drawBrowser();
+						}
 					}
 				}
 				else if (c == 8)
@@ -380,7 +391,18 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 				{
 					list.tail->next = NULL;
 					list.head->prev = NULL;
-					if (accumulator->url == "View History")
+					if(accumulator->url == "Yes")
+					{
+						listLS.tail->next = NULL;
+						listLS.head->prev = NULL;
+						removeCondiNode(listLS, temp_Delete->dmy);
+						drawBrowser();
+					}
+					else if(accumulator->url == "No")
+					{
+						break;
+					}
+					else if (accumulator == list.head)
 					{
 						viewHistory = true;
 						viewBookMark = false;
@@ -406,10 +428,9 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 				}
 				else if (c == 32)
 				{
-					listLS.tail->next = NULL;
-					listLS.head->prev = NULL;
-					removeCondiNode(listLS, accumulator->dmy);
-					drawBrowser();
+			
+					temp_Delete = accumulator;
+					drawDeleLS(listLS,accumulator->dmy) ;
 				}
 			}
 		}
@@ -623,7 +644,19 @@ void drawOption(listUrl &listHeader)
 	n_box(option, 1, textColor, false);
 	movePointer(option, listHeader, false);
 }
-
+void drawDeleLS(listUrl &listLS, string key)
+{
+	listUrl Answer;
+	createList(Answer);
+	int x = positionX[2] +100, y = 30, w = 30, h = 2;
+	textcolor(12);
+	gotoXY(x,y-1);
+	cout << "Xoa lich su ngay " << key << " ? " << endl;
+	addTail(Answer, createNode("Yes","", x, y, w, h));
+	addTail(Answer, createNode("No","", x, y+2, w, h));
+	n_box(Answer, 1, textColor, false);
+	movePointer(Answer, listLS, false);
+}
 void n_box(listUrl list, int b_color, int t_color, bool isCenter)
 {
 	Node *accumulator = list.head;
