@@ -5,6 +5,7 @@
 #include "docghifile.h"
 #include "content.h"
 #include "vebackground.h"
+#include "FNode.h"
 #define MAX 100
 #define outlinecolor 11
 
@@ -15,12 +16,14 @@ int positionX[7];
 int textColor = 15;
 int bgColor = 200;
 int highlineColor = 143;
-bool viewHistory = false, viewBookMark = false;
+bool viewHistory = false, viewBookMark = false, viewFavorite = false;
 string homeName = "myhomepage.com";
 listUrl listLS;
 listUrl listBookMark;
 LTab listTab;
 Tab *currentTab;
+FNode *root = createFNode("Favorite");
+
 
 int xT = 30;
 int yT = 10;
@@ -42,9 +45,14 @@ void initHeader(listUrl &listHeader);
 void initViewList(listUrl &list);
 void initTab();
 
-void box(Node *header, int b_color, int t_color, bool isCenter);
+template <typename T>
+void assignValue(T *node, int x, int y, int w, int h);
+
+template <typename T>
+void box(T *header, int b_color, int t_color, bool isCenter);
 void n_box(listUrl list, int b_color, int t_color, bool isCenter);
-void highline(Node *accumulator, int b_color, int t_color, bool isCenter);
+template <typename T>
+void highline(T *accumulator, int b_color, int t_color, bool isCenter);
 
 void createSearchBar(listUrl &listSearch, listUrl &listHeader);
 void Header(listUrl &listHeader);
@@ -54,15 +62,21 @@ void drawBrowser();
 void drawSquareTab(string content, int x, int y, bool isFocus);
 void drawOption(listUrl &listHeader);
 void drawListTab();
+void drawFavorite();
+void drawFolder(FNode *root);
 
 void movePointer(listUrl &list, listUrl &listHeader, bool isCenter);
-void moveHeader(listUrl &listSearch, listUrl &listHeader);
+template <typename T>
+void moveHeader(T *accumulator, listUrl &listHeader);
 void moveTab();
+ void moveLFUrl(FNode *currentFavorite, bool isHead);
+ void moveLFNode(FNode *currentFavorite);
+void moveFavorite(FNode *currentFavorite);
 
 int main()
 {
 	// khoi tao duy nhat 1 lan
-	set_console_size(1200, 600);
+	set_console_size(1200, 1000);
 	initVariable();
 	initTab();
 
@@ -79,6 +93,7 @@ void initVariable()
 	docFile(listBookMark, "bookMark.txt");
 	docFile(listLS, "url.txt");
 	initListTab(listTab);
+	initFolder(root);
 }
 
 void initTab()
@@ -142,7 +157,7 @@ void moveTab()
 				{
 					listTab.tail->next = NULL;
 					listTab.head->prev = NULL;
-					moveHeader(currentTab->listUrl, currentTab->listHeader);
+					moveHeader(currentTab->listUrl.head, currentTab->listHeader);
 				}
 			}
 			else if (c == 8)
@@ -181,8 +196,11 @@ void drawBrowser()
 	}
 	else if (viewBookMark)
 	{
-		drawList(listBookMark);
-		movePointer(listBookMark, currentTab->listHeader, false);
+		 drawList(listBookMark);
+		 movePointer(listBookMark, currentTab->listHeader, false);
+	}
+	else if(viewFavorite) {
+		drawFavorite();
 	}
 
 	if (currentTab->currentHeader->url == "Option")
@@ -194,7 +212,7 @@ void drawBrowser()
 		ascii_art(currentTab->currentUrl->url, xT, yT, t_color);
 		if (currentTab->currentUrl->url == homeName)
 		{
-			drawBR();
+//			drawBR();
 		}
 		if (currentTab->currentUrl->url == homeName || currentTab->currentHeader->x == positionX[3])
 		{
@@ -202,7 +220,7 @@ void drawBrowser()
 		}
 		else
 		{
-			moveHeader(currentTab->listUrl, currentTab->listHeader);
+			moveHeader(currentTab->listUrl.head, currentTab->listHeader);
 		}
 	}
 }
@@ -223,7 +241,7 @@ void createSearchBar(listUrl &listSearch, listUrl &listHeader)
 				c = _getch();
 				if (c == 72)
 				{
-					moveHeader(listSearch, listHeader);
+					moveHeader(currentTab->listUrl.head, listHeader);
 				}
 			}
 			else
@@ -317,7 +335,7 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 						{
 							list.tail->next = NULL;
 							list.head->prev = NULL;
-							moveHeader(list, listHeader);
+							moveHeader(currentTab->listUrl.head, listHeader);
 						}
 						else
 						{
@@ -349,22 +367,33 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 						removeNode(listBookMark, accumulator);
 						drawBrowser();
 					}
+
 				}
 				else if (c == 13)
 				{
 					list.tail->next = NULL;
 					list.head->prev = NULL;
-					if (accumulator == list.head)
+					if (accumulator->url == "View History")
 					{
 						viewHistory = true;
 						viewBookMark = false;
+						viewFavorite = false;
 					}
-					else if (accumulator == list.head->next)
+					else if (accumulator->url == "View BookMark")
 					{
-						viewHistory = false;
+						initFolder(root);
 						viewBookMark = true;
+						viewHistory = false;
+						viewFavorite = false;
 					}
-					else if (accumulator == list.tail)
+					else if (accumulator->url == "View your Favorite")
+					{
+						viewFavorite = true;
+						viewHistory = false;
+						viewBookMark = false;
+						
+					}
+					else if (accumulator->url == "Open new tab")
 					{
 						initTab();
 					}
@@ -426,7 +455,8 @@ void Header(listUrl &listHeader)
 	}
 }
 
-void box(Node *header, int b_color, int t_color, bool isCenter)
+template <typename T>
+void box(T *header, int b_color, int t_color, bool isCenter)
 {
 	textcolor(b_color);
 	for (int iy = header->y + 1; iy <= header->y + header->h - 1; iy++)
@@ -483,13 +513,14 @@ void box(Node *header, int b_color, int t_color, bool isCenter)
 	cout << char(217);
 }
 
-void moveHeader(listUrl &listSearch, listUrl &listHeader)
+template <typename T>
+void moveHeader(T *accumulator, listUrl &listHeader)
 {
 	ShowCur(0);
 	listHeader.tail->next = listHeader.head;
 	listHeader.head->prev = listHeader.tail;
 
-	Node *accumulator = currentTab->currentHeader;
+	accumulator = currentTab->currentHeader;
 	highline(accumulator, bgColor, textColor, true);
 
 	while (true)
@@ -530,6 +561,7 @@ void moveHeader(listUrl &listSearch, listUrl &listHeader)
 				listHeader.head->prev = NULL;
 				viewHistory = false;
 				viewBookMark = false;
+				viewFavorite = false;
 				if (accumulator->url == "<")
 				{
 					if (currentTab->currentUrl != currentTab->listUrl.head)
@@ -537,7 +569,7 @@ void moveHeader(listUrl &listSearch, listUrl &listHeader)
 						currentTab->currentUrl = currentTab->currentUrl->prev;
 					}
 					else
-						moveHeader(listSearch, listHeader);
+						moveHeader(currentTab->listUrl.head, listHeader);
 				}
 				else if (accumulator->url == ">")
 				{
@@ -546,11 +578,11 @@ void moveHeader(listUrl &listSearch, listUrl &listHeader)
 						currentTab->currentUrl = currentTab->currentUrl->next;
 					}
 					else
-						moveHeader(listSearch, listHeader);
+						moveHeader(currentTab->listUrl.head, listHeader);
 				}
 				else if (accumulator->url == "Home" && currentTab->currentUrl->url != homeName)
 				{
-					addTail(listSearch, createNode(homeName));
+					addTail(currentTab->listUrl, createNode(homeName));
 					currentTab->currentUrl = currentTab->currentUrl->next;
 				}
 				else if (accumulator->url == "|||\\")
@@ -580,8 +612,9 @@ void drawOption(listUrl &listHeader)
 	createList(option);
 	int x = positionX[3] + 10, y = 10, w = 50, h = 2;
 	addTail(option, createNode("View History", "", x, y, w, h));
-	addTail(option, createNode("View BookMark", "", x, y + 2, w, h));
-	addTail(option, createNode("Open new tab", "", x, y + 2 + 2, w, h));
+	addTail(option, createNode("View BookMark", "", x, y+= 2, w, h));
+	addTail(option, createNode("View your Favorite", "", x, y+= 2, w, h));
+	addTail(option, createNode("Open new tab", "", x, y+= 2, w, h));
 	n_box(option, 1, textColor, false);
 	movePointer(option, listHeader, false);
 }
@@ -605,7 +638,8 @@ void n_box(listUrl list, int b_color, int t_color, bool isCenter)
 	}
 }
 
-void highline(Node *accumulator, int b_color, int t_color, bool isCenter)
+template <typename T>
+void highline(T *accumulator, int b_color, int t_color, bool isCenter)
 {
 	textcolor(b_color);
 	for (int iy = accumulator->y + 1; iy <= accumulator->y + accumulator->h - 1; iy++)
@@ -665,4 +699,144 @@ void drawSquareTab(string content, int x = 0, int y = 0, bool isFocus = false)
 			}
 		}
 	}
+}
+
+void drawFavorite() {
+//	gotoXY(x, y);
+//	cout << "Urls";
+	// drawList(root->LUrl);
+	drawFolder(root);
+	moveFavorite(root);
+}
+
+void drawFolder(FNode *root) {
+	int x = 1, y = 7, w = 101, h = 2;
+	bool flag = 0, isCenter = false;
+	if(root->LUrl.head->next->next != NULL) {
+		flag = 1;
+		Node *accumulator = root->LUrl.head;
+		int i = 0;
+		while (accumulator != NULL)
+		{
+			assignValue(accumulator, x, y, w, h);
+			isCenter = (accumulator == root->LUrl.head || accumulator == root->LUrl.head->next) ? true : false;
+			box(accumulator, 1, textColor, isCenter);
+			if (i != 0)
+			{
+				gotoXY(x, y);
+				cout << char(195);
+				gotoXY(x + w, y);
+				cout << char(180);
+			}
+			i++;
+			y+= 2;
+			accumulator = accumulator->next;
+		}
+	}
+	if (root->LFNode.head != NULL)
+	{
+		
+		FNode *accumulator = root->LFNode.head;
+		int i = 0;
+		while (accumulator != NULL)
+		{
+			assignValue(accumulator, x, y, w, h);
+			box(accumulator, 1, textColor, false);
+			if (i != 0 || flag)
+			{
+				gotoXY(x, y);
+				cout << char(195);
+				gotoXY(x + w, y);
+				cout << char(180);
+			}
+			i++;
+			y+= 2;
+			accumulator = accumulator->next;
+		}
+		highline(root->LUrl.head, bgColor, textColor, false);
+	}
+}
+
+void moveFavorite(FNode *currentFavorite) {
+	ShowCur(0);
+	moveLFUrl(currentFavorite, true);
+}
+
+void moveLFUrl(FNode *currentFavorite, bool isHead) {
+	ShowCur(0);
+
+	Node *accumulator = isHead ? currentFavorite->LUrl.head : currentFavorite->LUrl.tail;
+	bool  isCenter = (accumulator == currentFavorite->LUrl.head || accumulator == currentFavorite->LUrl.head->next) ? true : false;
+	highline(accumulator, bgColor, textColor, isCenter);
+
+	while(true) {
+		if(_kbhit()) {
+			char c = _getch();
+			if(c == -32) {
+				isCenter = (accumulator == currentFavorite->LUrl.head || accumulator == currentFavorite->LUrl.head->next) ? true : false;
+				c = _getch();
+				if(c == 80) {
+					highline(accumulator, 1, textColor, isCenter);
+					if(accumulator == currentFavorite->LUrl.tail) moveLFNode(currentFavorite);
+					else {
+						accumulator = accumulator->next;
+						isCenter = (accumulator == currentFavorite->LUrl.head || accumulator == currentFavorite->LUrl.head->next) ? true : false;
+						highline(accumulator, bgColor, textColor, isCenter);
+					}
+				}
+				else if(c == 72) {
+					highline(accumulator, 1, textColor, isCenter);
+					if(accumulator == currentFavorite->LUrl.head) moveHeader(accumulator, currentTab->listHeader);
+					else {
+						accumulator = accumulator->prev;
+						isCenter = (accumulator == currentFavorite->LUrl.head || accumulator == currentFavorite->LUrl.head->next) ? true : false;
+						highline(accumulator, bgColor, textColor, isCenter);
+					}
+				}
+			}
+		}
+	}
+
+}
+
+void moveLFNode(FNode *currentFavorite) {
+	ShowCur(0);
+	bool  isCenter = false;
+
+	FNode *accumulator = currentFavorite->LFNode.head;
+	highline(accumulator, bgColor, textColor, isCenter);
+
+	while(true) {
+		if(_kbhit()) {
+			char c = _getch();
+			if(c == -32) {
+				c = _getch();
+				if(c == 80) {
+					highline(accumulator, 1, textColor, isCenter);
+					if(accumulator == currentFavorite->LFNode.tail) moveLFUrl(currentFavorite, true);
+					else {
+						accumulator = accumulator->next;
+						highline(accumulator, bgColor, textColor, isCenter);
+					}
+				}
+				else if (c == 72) {
+					highline(accumulator, 1, textColor, isCenter);
+					if(accumulator == currentFavorite->LFNode.head) moveLFUrl(accumulator, false);
+					else {
+						accumulator = accumulator->prev;
+						highline(accumulator, bgColor, textColor, isCenter);
+					}
+				}
+			}
+		}
+	}
+}
+
+
+template <typename T>
+void assignValue(T *node, int x, int y, int w, int h) {
+	node->x = x;
+	node->y = y;
+	node->w = w;
+	node->h = h;
 }
