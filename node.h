@@ -122,4 +122,32 @@ void findAndDelete(listUrl &list, string key)
    Node* result = SearchNode(list, key);
    if (result) removeNode(list, result);
 }
-
+void removeAllNode(listUrl &list)
+{
+    while(list.head != NULL)
+    {
+        removeNode(list,list.head);
+    }
+}
+void removeCondiNode(listUrl &list, string key)
+{
+	Node*i = list.head;
+	
+	while (i != NULL)
+	{
+		if (i->dmy == key)
+		{
+			if(i!=list.tail){
+				i = i->next;
+				removeNode(list,i->prev);          
+			}
+			else
+			{
+				removeNode(list,list.tail);
+				i = NULL;
+			}
+		}
+		else
+			i = i->next;
+	}
+}

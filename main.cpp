@@ -250,10 +250,12 @@ void drawList(listUrl list)
 		cout << "XOA LICH SU : NHAN PHIM BACKSPACE" << endl;
 		gotoXY(15, 7);
 		cout << "XOA TOAN BO LICH SU: NHAN PHIM DELETE" << endl;
+		gotoXY(15,8);
+		cout << "XOA LICH SU TRONG MOT NGAY: NHAN PHIM SPACE" << endl;
 		Node *accumulator = list.head;
 		int i = 0;
-		int x = 1, y = 9, w = 101, h = 2;
-		gotoXY(0, 8);
+		int x = 1, y = 10, w = 101, h = 2;
+		gotoXY(0, 9);
 		cout << list.head->dmy;
 		string cur_dmy = list.head->dmy;
 		while (accumulator != NULL)
@@ -323,6 +325,13 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 							highline(accumulator, bgColor, textColor, isCenter);
 						}
 					}
+					else if (c == 83)
+					{
+						listLS.tail->next = NULL;
+						listLS.head->prev = NULL;
+						removeAllNode(listLS);
+						drawBrowser();
+					}
 				}
 				else if (c == 8)
 				{
@@ -359,6 +368,13 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 					{
 						initTab();
 					}
+					drawBrowser();
+				}
+				else if (c == 32)
+				{
+					listLS.tail->next = NULL;
+					listLS.head->prev = NULL;
+					removeCondiNode(listLS, accumulator->dmy);
 					drawBrowser();
 				}
 			}
