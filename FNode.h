@@ -1,12 +1,12 @@
-// #pragma once
-#include <iostream>
+#pragma once
 #include "node.h"
 #include "mylib.h"
 
 using namespace std;
 
 struct FNode {
-    string name;
+    string url;
+    int x, y, w, h;
     FNode *prev;
     FNode *next;
     listUrl LUrl;
@@ -17,24 +17,25 @@ struct FNode {
     }  LFNode;
 };
 
-void createFList(FNode *root) {
-    root->LFNode.head == NULL;
-    root->LFNode.tail == NULL;
-}
-
-FNode *createFNode(string name) {
+FNode *createFNode(string url, int x = 0, int y = 0, int w = 0, int h = 0) {
     FNode *newFNode = new FNode;
-    newFNode->name = name;
+    newFNode->url = "|/-/| " + url;
+    newFNode->x = x;
+    newFNode->y = y;
+    newFNode->w = w;
+    newFNode->h = h;
     newFNode->prev = NULL;
     newFNode->next = NULL;
     newFNode->LFNode.head = NULL;
     newFNode->LFNode.tail = NULL;
     createList(newFNode->LUrl);
+    addTail(newFNode->LUrl, createNode("***Add Url to this favorite***"));
+    addTail(newFNode->LUrl, createNode("***Create new Favorite***"));
     return newFNode;
 }
 
 //void printFNode(FNode *root) {
-//	cout << "Folder: " << root->name << endl;
+//	cout << "Folder: " << root->url << endl;
 //	if(root->LUrl.head || root->LFNode.head) {	
 //		cout << "Has: " << endl;
 //	    for(Node *i = root->LUrl.head; i; i = i->next) {
@@ -51,7 +52,7 @@ FNode *createFNode(string name) {
 
 void printFNode(FNode *root, int x, int &y) {
 	gotoXY(x, y);
-	cout << "Folder: " << root->name;
+	cout << "Folder: " << root->url;
 	if(root->LUrl.head || root->LFNode.head) {
 		gotoXY(x, ++y);
 	    cout << "Has: ";
@@ -76,15 +77,18 @@ void addTailFNode(FNode *root, FNode *newFNode) {
 	else
 	{
 		root->LFNode.tail->next = newFNode;
-		root->prev = newFNode->LFNode.tail;
+		newFNode->prev = root->LFNode.tail;
 		root->LFNode.tail = newFNode;
 	}
 }
 
-int main() {
-	FNode *root = createFNode("root");
+void removeFNode(FNode *p) {
+	
+}
 
-   addTail(root->LUrl, createNode("facebook.com",""));
+void initFolder(FNode *root) {
+
+  addTail(root->LUrl, createNode("facebook.com"));
 
    FNode *favorite = createFNode("favorite");
    
@@ -102,11 +106,10 @@ int main() {
    addTailFNode(favorite, animals);
    addTailFNode(favorite, songs);
 
-   addTailFNode(root, favorite);
+  addTailFNode(root, favorite);
 	addTailFNode(root, hate);
 	addTailFNode(root, musiacals);
-	int x= 0,y = 0;
-   printFNode(root, x, y);
+// 	int x= 0,y = 0;
+//    printFNode(root, x, y);
 
-	   return 0;
 }
