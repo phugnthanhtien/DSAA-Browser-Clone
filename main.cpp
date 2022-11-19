@@ -212,7 +212,7 @@ void drawBrowser()
 		ascii_art(currentTab->currentUrl->url, xT, yT, t_color);
 		if (currentTab->currentUrl->url == homeName)
 		{
-//			drawBR();
+			drawBR();
 		}
 		if (currentTab->currentUrl->url == homeName || currentTab->currentHeader->x == positionX[3])
 		{
@@ -381,7 +381,6 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 					}
 					else if (accumulator->url == "View BookMark")
 					{
-						initFolder(root);
 						viewBookMark = true;
 						viewHistory = false;
 						viewFavorite = false;
