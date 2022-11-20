@@ -23,6 +23,7 @@ listUrl listBookMark;
 LTab listTab;
 Tab *currentTab;
 FNode *root = createFNode("Favorite");
+FNode *currentFavorite = root;
 
 
 int xT = 30;
@@ -62,16 +63,16 @@ void drawBrowser();
 void drawSquareTab(string content, int x, int y, bool isFocus);
 void drawOption(listUrl &listHeader);
 void drawListTab();
-void drawFavorite();
-void drawFolder(FNode *root);
+void drawFolder(FNode *current);
+void drawFavorite(FNode *current);
 
 void movePointer(listUrl &list, listUrl &listHeader, bool isCenter);
 template <typename T>
 void moveHeader(T *accumulator, listUrl &listHeader);
 void moveTab();
- void moveLFUrl(FNode *currentFavorite, bool isHead);
- void moveLFNode(FNode *currentFavorite);
-void moveFavorite(FNode *currentFavorite);
+void moveLFUrl(FNode *current, bool isHead);
+void moveLFNode(FNode *current);
+void moveFavorite(FNode *current);
 
 int main()
 {
@@ -80,7 +81,7 @@ int main()
 	initVariable();
 	initTab();
 
-	drawBrowser();
+	 drawBrowser();
 
 	_getch();
 	return 0;
@@ -200,7 +201,7 @@ void drawBrowser()
 		 movePointer(listBookMark, currentTab->listHeader, false);
 	}
 	else if(viewFavorite) {
-		drawFavorite();
+		drawFavorite(currentFavorite);
 	}
 
 	if (currentTab->currentHeader->url == "Option")
@@ -700,95 +701,86 @@ void drawSquareTab(string content, int x = 0, int y = 0, bool isFocus = false)
 	}
 }
 
-void drawFavorite() {
+void drawFavorite(FNode *current) {
 //	gotoXY(x, y);
 //	cout << "Urls";
 	// drawList(root->LUrl);
-	drawFolder(root);
-	moveFavorite(root);
+	drawFolder(current);
+	moveFavorite(current);
 }
 
-void drawFolder(FNode *root) {
+void drawFolder(FNode *current) {
 	int x = 1, y = 7, w = 101, h = 2;
-	bool flag = 0, isCenter = false;
-	if(root->LUrl.head->next->next != NULL) {
-		flag = 1;
-		Node *accumulator = root->LUrl.head;
-		int i = 0;
-		while (accumulator != NULL)
-		{
-			assignValue(accumulator, x, y, w, h);
-			isCenter = (accumulator == root->LUrl.head || accumulator == root->LUrl.head->next) ? true : false;
-			box(accumulator, 1, textColor, isCenter);
-			if (i != 0)
-			{
-				gotoXY(x, y);
-				cout << char(195);
-				gotoXY(x + w, y);
-				cout << char(180);
-			}
-			i++;
-			y+= 2;
-			accumulator = accumulator->next;
-		}
-	}
-	if (root->LFNode.head != NULL)
+	bool isCenter = false;
+	Node *accumulator = current->LUrl.head;
+	int i = 0;
+	while (accumulator != NULL)
 	{
-		
-		FNode *accumulator = root->LFNode.head;
-		int i = 0;
+		assignValue(accumulator, x, y, w, h);
+		isCenter = (accumulator == current->LUrl.head || accumulator == current->LUrl.head->next) ? true : false;
+		box(accumulator, 1, textColor, isCenter);
+		if (i != 0)
+		{
+			gotoXY(x, y);
+			cout << char(195);
+			gotoXY(x + w, y);
+			cout << char(180);
+		}
+		i++;
+		y+= 2;
+		accumulator = accumulator->next;
+	}
+	if (current->LFNode.head != NULL)
+	{
+		FNode *accumulator = current->LFNode.head;
 		while (accumulator != NULL)
 		{
 			assignValue(accumulator, x, y, w, h);
 			box(accumulator, 1, textColor, false);
-			if (i != 0 || flag)
-			{
-				gotoXY(x, y);
-				cout << char(195);
-				gotoXY(x + w, y);
-				cout << char(180);
-			}
-			i++;
+			gotoXY(x, y);
+			cout << char(195);
+			gotoXY(x + w, y);
+			cout << char(180);
 			y+= 2;
 			accumulator = accumulator->next;
 		}
-		highline(root->LUrl.head, bgColor, textColor, false);
 	}
 }
 
-void moveFavorite(FNode *currentFavorite) {
+void moveFavorite(FNode *current) {
 	ShowCur(0);
-	moveLFUrl(currentFavorite, true);
+	moveLFUrl(current, true);
 }
 
-void moveLFUrl(FNode *currentFavorite, bool isHead) {
+void moveLFUrl(FNode *current, bool isHead) {
 	ShowCur(0);
 
-	Node *accumulator = isHead ? currentFavorite->LUrl.head : currentFavorite->LUrl.tail;
-	bool  isCenter = (accumulator == currentFavorite->LUrl.head || accumulator == currentFavorite->LUrl.head->next) ? true : false;
+	Node *accumulator = isHead ? current->LUrl.head : current->LUrl.tail;
+	bool  isCenter = (accumulator == current->LUrl.head || accumulator == current->LUrl.head->next) ? true : false;
 	highline(accumulator, bgColor, textColor, isCenter);
 
 	while(true) {
 		if(_kbhit()) {
 			char c = _getch();
 			if(c == -32) {
-				isCenter = (accumulator == currentFavorite->LUrl.head || accumulator == currentFavorite->LUrl.head->next) ? true : false;
+				isCenter = (accumulator == current->LUrl.head || accumulator == current->LUrl.head->next) ? true : false;
 				c = _getch();
 				if(c == 80) {
 					highline(accumulator, 1, textColor, isCenter);
-					if(accumulator == currentFavorite->LUrl.tail) moveLFNode(currentFavorite);
+					if(accumulator == current->LUrl.tail) 
+						current->LFNode.head ? moveLFNode(current) : moveLFUrl(current, true);
 					else {
 						accumulator = accumulator->next;
-						isCenter = (accumulator == currentFavorite->LUrl.head || accumulator == currentFavorite->LUrl.head->next) ? true : false;
+						isCenter = (accumulator == current->LUrl.head || accumulator == current->LUrl.head->next) ? true : false;
 						highline(accumulator, bgColor, textColor, isCenter);
 					}
 				}
 				else if(c == 72) {
 					highline(accumulator, 1, textColor, isCenter);
-					if(accumulator == currentFavorite->LUrl.head) moveHeader(accumulator, currentTab->listHeader);
+					if(accumulator == current->LUrl.head) moveHeader(accumulator, currentTab->listHeader);
 					else {
 						accumulator = accumulator->prev;
-						isCenter = (accumulator == currentFavorite->LUrl.head || accumulator == currentFavorite->LUrl.head->next) ? true : false;
+						isCenter = (accumulator == current->LUrl.head || accumulator == current->LUrl.head->next) ? true : false;
 						highline(accumulator, bgColor, textColor, isCenter);
 					}
 				}
@@ -798,11 +790,11 @@ void moveLFUrl(FNode *currentFavorite, bool isHead) {
 
 }
 
-void moveLFNode(FNode *currentFavorite) {
+void moveLFNode(FNode *current) {
 	ShowCur(0);
 	bool  isCenter = false;
 
-	FNode *accumulator = currentFavorite->LFNode.head;
+	FNode *accumulator = current->LFNode.head;
 	highline(accumulator, bgColor, textColor, isCenter);
 
 	while(true) {
@@ -812,7 +804,7 @@ void moveLFNode(FNode *currentFavorite) {
 				c = _getch();
 				if(c == 80) {
 					highline(accumulator, 1, textColor, isCenter);
-					if(accumulator == currentFavorite->LFNode.tail) moveLFUrl(currentFavorite, true);
+					if(accumulator == current->LFNode.tail) moveLFUrl(current, true);
 					else {
 						accumulator = accumulator->next;
 						highline(accumulator, bgColor, textColor, isCenter);
@@ -820,12 +812,16 @@ void moveLFNode(FNode *currentFavorite) {
 				}
 				else if (c == 72) {
 					highline(accumulator, 1, textColor, isCenter);
-					if(accumulator == currentFavorite->LFNode.head) moveLFUrl(accumulator, false);
+					if(accumulator == current->LFNode.head) moveLFUrl(current, false);
 					else {
 						accumulator = accumulator->prev;
 						highline(accumulator, bgColor, textColor, isCenter);
 					}
 				}
+			}
+			else if(c == 13) {
+				*currentFavorite = *accumulator;
+				drawBrowser();
 			}
 		}
 	}
