@@ -81,9 +81,9 @@ int main()
 	initVariable();
 	initTab();
 
-//	 drawBrowser();
-	viewFavorite = true;
-	drawFavorite(root);
+	 drawBrowser();
+//	viewFavorite = true;  -> debug cho de~
+//	drawFavorite(root);
 
 	_getch();
 	return 0;
@@ -219,7 +219,7 @@ void drawBrowser()
 		ascii_art(currentTab->currentUrl->url, xT, yT, t_color);
 		if (currentTab->currentUrl->url == homeName)
 		{
-//			drawBR();
+//			drawBR();  -> debug cho de
 		}
 		if (currentTab->currentUrl->url == homeName || currentTab->currentHeader->x == positionX[3])
 		{
