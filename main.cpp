@@ -22,8 +22,7 @@ listUrl listLS;
 listUrl listBookMark;
 LTab listTab;
 Tab *currentTab;
-FNode *root = createFNode("Favorite");
-FNode *currentFavorite = root;
+FNode *root = createFNode("ROOT");
 
 
 int xT = 30;
@@ -59,6 +58,7 @@ void createSearchBar(listUrl &listSearch, listUrl &listHeader);
 void Header(listUrl &listHeader);
 
 void drawList(listUrl list);
+void drawHeaderAndTab();
 void drawBrowser();
 void drawSquareTab(string content, int x, int y, bool isFocus);
 void drawOption(listUrl &listHeader);
@@ -81,7 +81,9 @@ int main()
 	initVariable();
 	initTab();
 
-	 drawBrowser();
+//	 drawBrowser();
+	viewFavorite = true;
+	drawFavorite(root);
 
 	_getch();
 	return 0;
@@ -185,11 +187,15 @@ void moveTab()
 	}
 }
 
-void drawBrowser()
-{
+void drawHeaderAndTab() {
 	system("cls");
 	drawListTab();
 	Header(currentTab->listHeader);
+}
+
+void drawBrowser()
+{
+	drawHeaderAndTab();
 	if (viewHistory)
 	{
 		drawList(listLS);
@@ -201,7 +207,7 @@ void drawBrowser()
 		 movePointer(listBookMark, currentTab->listHeader, false);
 	}
 	else if(viewFavorite) {
-		drawFavorite(currentFavorite);
+		drawFavorite(root);
 	}
 
 	if (currentTab->currentHeader->url == "Option")
@@ -391,7 +397,6 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 						viewFavorite = true;
 						viewHistory = false;
 						viewBookMark = false;
-						
 					}
 					else if (accumulator->url == "Open new tab")
 					{
@@ -702,9 +707,11 @@ void drawSquareTab(string content, int x = 0, int y = 0, bool isFocus = false)
 }
 
 void drawFavorite(FNode *current) {
-//	gotoXY(x, y);
-//	cout << "Urls";
-	// drawList(root->LUrl);
+	if(current->url != "|/-/| ROOT") {
+		gotoXY(positionX[2], 6);
+		textcolor(9);
+		cout << "Favorite Name: " << current->url;
+	}
 	drawFolder(current);
 	moveFavorite(current);
 }
@@ -785,6 +792,13 @@ void moveLFUrl(FNode *current, bool isHead) {
 					}
 				}
 			}
+			else if(c == 13) {
+				if(accumulator == current->LUrl.head->next) {
+					addTailFNode(current, createFNode("HEHEHHEHE"));
+					drawHeaderAndTab();
+					drawFavorite(current);
+				}
+			}
 		}
 	}
 
@@ -820,8 +834,8 @@ void moveLFNode(FNode *current) {
 				}
 			}
 			else if(c == 13) {
-				*currentFavorite = *accumulator;
-				drawBrowser();
+				drawHeaderAndTab();
+				drawFavorite(accumulator);
 			}
 		}
 	}
