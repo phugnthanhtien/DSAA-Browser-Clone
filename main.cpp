@@ -428,9 +428,11 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 				}
 				else if (c == 32)
 				{
-			
+					if (viewHistory)
+					{
 					temp_Delete = accumulator;
 					drawDeleLS(listLS,accumulator->dmy) ;
+					}
 				}
 			}
 		}
