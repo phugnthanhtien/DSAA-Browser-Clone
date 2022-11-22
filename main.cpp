@@ -354,6 +354,8 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 					}
 					else if (c == 83)
 					{
+						list.tail->next = NULL;
+						list.head->prev = NULL;
 						if(viewHistory)
 						{
 							drawDeleLS(listLS,accumulator->url,2);
@@ -366,6 +368,8 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 				}
 				else if (c == 8)
 				{
+					list.tail->next = NULL;
+					list.head->prev = NULL;
 					if (viewHistory)
 					{
 						temp_Delete_url = accumulator;
@@ -384,8 +388,6 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 					{
 						if (viewHistory)
 						{
-							listLS.tail->next = NULL;
-							listLS.head->prev = NULL;
 							if (temp_Delete != NULL)
 							{
 								removeCondiNode(listLS, temp_Delete->dmy);
@@ -406,8 +408,6 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 						}
 						else
 						{
-							listBookMark.tail->next = NULL;
-							listBookMark.head->prev = NULL;
 							if (temp_Delete_url != NULL)
 							{
 								removeNode(listBookMark, temp_Delete_url);
@@ -419,10 +419,11 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 								drawBrowser();
 							}
 						}
+						
 					}
 					else if(accumulator->url == "No")
 					{
-						break;
+						drawBrowser();
 					}
 					else if (accumulator == list.head)
 					{
@@ -450,6 +451,8 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 				}
 				else if (c == 32)
 				{
+					list.tail->next = NULL;
+					list.head->prev = NULL;
 					if (viewHistory)
 					{
 					temp_Delete = accumulator;
@@ -672,7 +675,7 @@ void drawDeleLS(listUrl &listLS, string key, int t)
 {
 	listUrl Answer;
 	createList(Answer);
-	int x = positionX[2] +100, y = 10, w = 30, h = 2;
+	int x = positionX[2] +85, y = 10, w = 30, h = 2;
 	textcolor(12);
 	gotoXY(x,y-1);
 	if (t==1)
