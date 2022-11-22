@@ -23,6 +23,7 @@ listUrl listBookMark;
 LTab listTab;
 Tab *currentTab;
 Node* temp_Delete = NULL;
+Node* temp_Delete_url = NULL;
 FNode *root = createFNode("ROOT");
 
 
@@ -355,17 +356,11 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 					{
 						if(viewHistory)
 						{
-							listLS.tail->next = NULL;
-							listLS.head->prev = NULL;
-							removeAllNode(listLS);
-							drawBrowser();
+							drawDeleLS(listLS,accumulator->url,2);
 						}
 						else if (viewBookMark)
 						{
-							listBookMark.tail->next = NULL;
-							listBookMark.head->prev = NULL;
-							removeAllNode(listBookMark);
-							drawBrowser();
+							drawDeleLS(listLS,accumulator->url,2);
 						}
 					}
 				}
@@ -373,30 +368,57 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 				{
 					if (viewHistory)
 					{
-						listLS.tail->next = NULL;
-						listLS.head->prev = NULL;
-						removeNode(listLS, accumulator);
-						drawBrowser();
+						temp_Delete_url = accumulator;
+						drawDeleLS(listLS,accumulator->url,0);
 					}
 					else if (viewBookMark)
 					{
-						listBookMark.tail->next = NULL;
-						listBookMark.head->prev = NULL;
-						removeNode(listBookMark, accumulator);
-						drawBrowser();
+						temp_Delete_url = accumulator;
+						drawDeleLS(listBookMark,accumulator->url,0);
 					}
 
 				}
 				else if (c == 13)
 				{
-					list.tail->next = NULL;
-					list.head->prev = NULL;
 					if(accumulator->url == "Yes")
 					{
-						listLS.tail->next = NULL;
-						listLS.head->prev = NULL;
-						removeCondiNode(listLS, temp_Delete->dmy);
-						drawBrowser();
+						if (viewHistory)
+						{
+							listLS.tail->next = NULL;
+							listLS.head->prev = NULL;
+							if (temp_Delete != NULL)
+							{
+								removeCondiNode(listLS, temp_Delete->dmy);
+								temp_Delete =  NULL;
+								drawBrowser();
+							}
+							else if (temp_Delete_url != NULL)
+							{
+								removeNode(listLS, temp_Delete_url);
+								temp_Delete_url = NULL;
+								drawBrowser();
+							}
+							else
+							{
+								removeAllNode(listLS);
+								drawBrowser();
+							}
+						}
+						else
+						{
+							listBookMark.tail->next = NULL;
+							listBookMark.head->prev = NULL;
+							if (temp_Delete_url != NULL)
+							{
+								removeNode(listBookMark, temp_Delete_url);
+								drawBrowser();
+							}
+							else
+							{
+								removeAllNode(listBookMark);
+								drawBrowser();
+							}
+						}
 					}
 					else if(accumulator->url == "No")
 					{
@@ -431,7 +453,7 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 					if (viewHistory)
 					{
 					temp_Delete = accumulator;
-					drawDeleLS(listLS,accumulator->dmy) ;
+					drawDeleLS(listLS,accumulator->dmy,1) ;
 					}
 				}
 			}
@@ -646,14 +668,19 @@ void drawOption(listUrl &listHeader)
 	n_box(option, 1, textColor, false);
 	movePointer(option, listHeader, false);
 }
-void drawDeleLS(listUrl &listLS, string key)
+void drawDeleLS(listUrl &listLS, string key, int t)
 {
 	listUrl Answer;
 	createList(Answer);
-	int x = positionX[2] +100, y = 30, w = 30, h = 2;
+	int x = positionX[2] +100, y = 10, w = 30, h = 2;
 	textcolor(12);
 	gotoXY(x,y-1);
-	cout << "Xoa lich su ngay " << key << " ? " << endl;
+	if (t==1)
+		cout << "Xoa lich su ngay " << key << " ? " << endl;
+	else if (t ==0)
+		cout << "Ban co chac muon xoa dia chi nay khong?" << endl;
+	else
+		cout << "Ban co muon xoa het tat ca ?" << endl;
 	addTail(Answer, createNode("Yes","", x, y, w, h));
 	addTail(Answer, createNode("No","", x, y+2, w, h));
 	n_box(Answer, 1, textColor, false);
