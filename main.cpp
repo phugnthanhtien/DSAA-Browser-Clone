@@ -65,7 +65,7 @@ void drawBrowser();
 void drawSquareTab(string content, int x, int y, bool isFocus);
 void drawOption(listUrl &listHeader);
 void drawListTab();
-void drawDeleLS(listUrl &listLS, string key);
+void drawDeleLS(listUrl &listLS, string key, int t);
 void drawFolder(FNode *current);
 void drawFavorite(FNode *current);
 
@@ -358,11 +358,11 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 						list.head->prev = NULL;
 						if(viewHistory)
 						{
-							drawDeleLS(listLS,accumulator->url,2);
+							drawDeleLS(listLS, accumulator->url, 2);
 						}
 						else if (viewBookMark)
 						{
-							drawDeleLS(listLS,accumulator->url,2);
+							drawDeleLS(listLS, accumulator->url, 2);
 						}
 					}
 				}
@@ -425,7 +425,7 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 					{
 						drawBrowser();
 					}
-					else if (accumulator == list.head)
+					else if (accumulator->url == "View History")
 					{
 						viewHistory = true;
 						viewBookMark = false;
