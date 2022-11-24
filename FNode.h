@@ -97,7 +97,7 @@ void initFolder(FNode *root) {
    FNode *songs = createFNode("songs");
    addTail(songs->LUrl, createNode("EM la"));
    
-   FNode *musiacals = createFNode("musiacals");
+   FNode *musiacals = createFNode("musicals");
    addTail(musiacals->LUrl, createNode("guitar"));
    addTail(musiacals->LUrl, createNode("piano"));
    
