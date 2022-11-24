@@ -22,10 +22,9 @@ listUrl listLS;
 listUrl listBookMark;
 LTab listTab;
 Tab *currentTab;
-Node* temp_Delete = NULL;
-Node* temp_Delete_url = NULL;
+Node *temp_Delete = NULL;
+Node *temp_Delete_url = NULL;
 FNode *root = createFNode("ROOT");
-
 
 int xT = 30;
 int yT = 10;
@@ -76,6 +75,7 @@ void moveTab();
 void moveLFUrl(FNode *current, bool isHead);
 void moveLFNode(FNode *current);
 void moveFavorite(FNode *current);
+void drawInputButton(FNode *current);
 
 int main()
 {
@@ -84,9 +84,9 @@ int main()
 	initVariable();
 	initTab();
 
-	 drawBrowser();
-//	viewFavorite = true;  -> debug cho de~
-//	drawFavorite(root);
+	drawBrowser();
+	//	viewFavorite = true;  -> debug cho de~
+	//	drawFavorite(root);
 
 	_getch();
 	return 0;
@@ -190,7 +190,8 @@ void moveTab()
 	}
 }
 
-void drawHeaderAndTab() {
+void drawHeaderAndTab()
+{
 	system("cls");
 	drawListTab();
 	Header(currentTab->listHeader);
@@ -206,10 +207,11 @@ void drawBrowser()
 	}
 	else if (viewBookMark)
 	{
-		 drawList(listBookMark);
-		 movePointer(listBookMark, currentTab->listHeader, false);
+		drawList(listBookMark);
+		movePointer(listBookMark, currentTab->listHeader, false);
 	}
-	else if(viewFavorite) {
+	else if (viewFavorite)
+	{
 		drawFavorite(root);
 	}
 
@@ -222,7 +224,7 @@ void drawBrowser()
 		ascii_art(currentTab->currentUrl->url, xT, yT, t_color);
 		if (currentTab->currentUrl->url == homeName)
 		{
-//			drawBR();  -> debug cho de
+			//			drawBR();  -> debug cho de
 		}
 		if (currentTab->currentUrl->url == homeName || currentTab->currentHeader->x == positionX[3])
 		{
@@ -278,7 +280,7 @@ void drawList(listUrl list)
 		cout << "XOA LICH SU : NHAN PHIM BACKSPACE" << endl;
 		gotoXY(15, 7);
 		cout << "XOA TOAN BO LICH SU: NHAN PHIM DELETE" << endl;
-		gotoXY(15,8);
+		gotoXY(15, 8);
 		cout << "XOA LICH SU TRONG MOT NGAY: NHAN PHIM SPACE" << endl;
 		Node *accumulator = list.head;
 		int i = 0;
@@ -290,10 +292,12 @@ void drawList(listUrl list)
 		{
 			if (accumulator->dmy != cur_dmy)
 			{
-				gotoXY(3, y + i*2);
-				cout << endl << accumulator->dmy << endl << endl;
+				gotoXY(3, y + i * 2);
+				cout << endl
+					 << accumulator->dmy << endl
+					 << endl;
 				cur_dmy = accumulator->dmy;
-				i+=1;
+				i += 1;
 			}
 			accumulator->x = x;
 			accumulator->y = y + (i * 2);
@@ -356,7 +360,7 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 					{
 						list.tail->next = NULL;
 						list.head->prev = NULL;
-						if(viewHistory)
+						if (viewHistory)
 						{
 							drawDeleLS(listLS, accumulator->url, 2);
 						}
@@ -373,25 +377,24 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 					if (viewHistory)
 					{
 						temp_Delete_url = accumulator;
-						drawDeleLS(listLS,accumulator->url,0);
+						drawDeleLS(listLS, accumulator->url, 0);
 					}
 					else if (viewBookMark)
 					{
 						temp_Delete_url = accumulator;
-						drawDeleLS(listBookMark,accumulator->url,0);
+						drawDeleLS(listBookMark, accumulator->url, 0);
 					}
-
 				}
 				else if (c == 13)
 				{
-					if(accumulator->url == "Yes")
+					if (accumulator->url == "Yes")
 					{
 						if (viewHistory)
 						{
 							if (temp_Delete != NULL)
 							{
 								removeCondiNode(listLS, temp_Delete->dmy);
-								temp_Delete =  NULL;
+								temp_Delete = NULL;
 								drawBrowser();
 							}
 							else if (temp_Delete_url != NULL)
@@ -419,9 +422,8 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 								drawBrowser();
 							}
 						}
-						
 					}
-					else if(accumulator->url == "No")
+					else if (accumulator->url == "No")
 					{
 						drawBrowser();
 					}
@@ -455,8 +457,8 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 					list.head->prev = NULL;
 					if (viewHistory)
 					{
-					temp_Delete = accumulator;
-					drawDeleLS(listLS,accumulator->dmy,1) ;
+						temp_Delete = accumulator;
+						drawDeleLS(listLS, accumulator->dmy, 1);
 					}
 				}
 			}
@@ -665,9 +667,9 @@ void drawOption(listUrl &listHeader)
 	createList(option);
 	int x = positionX[3] + 10, y = 10, w = 50, h = 2;
 	addTail(option, createNode("View History", "", x, y, w, h));
-	addTail(option, createNode("View BookMark", "", x, y+= 2, w, h));
-	addTail(option, createNode("View your Favorite", "", x, y+= 2, w, h));
-	addTail(option, createNode("Open new tab", "", x, y+= 2, w, h));
+	addTail(option, createNode("View BookMark", "", x, y += 2, w, h));
+	addTail(option, createNode("View your Favorite", "", x, y += 2, w, h));
+	addTail(option, createNode("Open new tab", "", x, y += 2, w, h));
 	n_box(option, 1, textColor, false);
 	movePointer(option, listHeader, false);
 }
@@ -675,17 +677,17 @@ void drawDeleLS(listUrl &listLS, string key, int t)
 {
 	listUrl Answer;
 	createList(Answer);
-	int x = positionX[2] +85, y = 10, w = 30, h = 2;
+	int x = positionX[2] + 85, y = 10, w = 30, h = 2;
 	textcolor(12);
-	gotoXY(x,y-1);
-	if (t==1)
+	gotoXY(x, y - 1);
+	if (t == 1)
 		cout << "Xoa lich su ngay " << key << " ? " << endl;
-	else if (t ==0)
+	else if (t == 0)
 		cout << "Ban co chac muon xoa dia chi nay khong?" << endl;
 	else
 		cout << "Ban co muon xoa het tat ca ?" << endl;
-	addTail(Answer, createNode("Yes","", x, y, w, h));
-	addTail(Answer, createNode("No","", x, y+2, w, h));
+	addTail(Answer, createNode("Yes", "", x, y, w, h));
+	addTail(Answer, createNode("No", "", x, y + 2, w, h));
 	n_box(Answer, 1, textColor, false);
 	movePointer(Answer, listLS, false);
 }
@@ -771,8 +773,10 @@ void drawSquareTab(string content, int x = 0, int y = 0, bool isFocus = false)
 	}
 }
 
-void drawFavorite(FNode *current) {
-	if(current->url != "|/-/| ROOT") {
+void drawFavorite(FNode *current)
+{
+	if (current->url != "|/-/| ROOT")
+	{
 		gotoXY(positionX[2], 6);
 		textcolor(9);
 		cout << "Favorite Name: " << current->url;
@@ -781,7 +785,8 @@ void drawFavorite(FNode *current) {
 	moveFavorite(current);
 }
 
-void drawFolder(FNode *current) {
+void drawFolder(FNode *current)
+{
 	int x = 1, y = 7, w = 101, h = 2;
 	bool isCenter = false;
 	Node *accumulator = current->LUrl.head;
@@ -799,7 +804,7 @@ void drawFolder(FNode *current) {
 			cout << char(180);
 		}
 		i++;
-		y+= 2;
+		y += 2;
 		accumulator = accumulator->next;
 	}
 	if (current->LFNode.head != NULL)
@@ -813,92 +818,157 @@ void drawFolder(FNode *current) {
 			cout << char(195);
 			gotoXY(x + w, y);
 			cout << char(180);
-			y+= 2;
+			y += 2;
 			accumulator = accumulator->next;
 		}
 	}
 }
 
-void moveFavorite(FNode *current) {
+void moveFavorite(FNode *current)
+{
 	ShowCur(0);
 	moveLFUrl(current, true);
 }
 
-void moveLFUrl(FNode *current, bool isHead) {
+void moveLFUrl(FNode *current, bool isHead)
+{
 	ShowCur(0);
 
 	Node *accumulator = isHead ? current->LUrl.head : current->LUrl.tail;
-	bool  isCenter = (accumulator == current->LUrl.head || accumulator == current->LUrl.head->next) ? true : false;
+	bool isCenter = (accumulator == current->LUrl.head || accumulator == current->LUrl.head->next) ? true : false;
 	highline(accumulator, bgColor, textColor, isCenter);
 
-	while(true) {
-		if(_kbhit()) {
+	while (true)
+	{
+		if (_kbhit())
+		{
 			char c = _getch();
-			if(c == -32) {
+			if (c == -32)
+			{
 				isCenter = (accumulator == current->LUrl.head || accumulator == current->LUrl.head->next) ? true : false;
 				c = _getch();
-				if(c == 80) {
+				if (c == 80)
+				{
 					highline(accumulator, 1, textColor, isCenter);
-					if(accumulator == current->LUrl.tail) 
+					if (accumulator == current->LUrl.tail)
 						current->LFNode.head ? moveLFNode(current) : moveLFUrl(current, true);
-					else {
+					else
+					{
 						accumulator = accumulator->next;
 						isCenter = (accumulator == current->LUrl.head || accumulator == current->LUrl.head->next) ? true : false;
 						highline(accumulator, bgColor, textColor, isCenter);
 					}
 				}
-				else if(c == 72) {
+				else if (c == 72)
+				{
 					highline(accumulator, 1, textColor, isCenter);
-					if(accumulator == current->LUrl.head) moveHeader(accumulator, currentTab->listHeader);
-					else {
+					if (accumulator == current->LUrl.head)
+						moveHeader(accumulator, currentTab->listHeader);
+					else
+					{
 						accumulator = accumulator->prev;
 						isCenter = (accumulator == current->LUrl.head || accumulator == current->LUrl.head->next) ? true : false;
 						highline(accumulator, bgColor, textColor, isCenter);
 					}
 				}
 			}
-			else if(c == 13) {
-				if(accumulator == current->LUrl.head->next) {
-					addTailFNode(current, createFNode("HEHEHHEHE"));
+			else if (c == 13)
+			{
+				if (accumulator == current->LUrl.head->next)
+				{
+					drawInputButton(current);
+				}
+				else if (accumulator == current->LUrl.head)
+				{
+					string temp = currentTab->currentUrl->url;
+					if (current->LUrl.tail->url != temp)
+					{
+						addTail(current->LUrl, createNode(temp));
+					}
+					else
+					{
+						gotoXY(108, 8);
+						textcolor(14);
+						cout << "Url da duoc them vao";
+						sleep(1);
+					}
 					drawHeaderAndTab();
 					drawFavorite(current);
 				}
 			}
 		}
 	}
-
 }
 
-void moveLFNode(FNode *current) {
+void drawInputButton(FNode *current)
+{
+	string input;
+	box(createNode("", "", 105, 9, 30, 2), 0, 3, false);
+	gotoXY(108, 8);
+	textcolor(14);
+	cout << "Enter name of your folder";
+	gotoXY(108, 10);
+	ShowCur(1);
+	while (true)
+	{
+		if (_kbhit())
+		{
+			char c = _getch();
+
+			{
+				textcolor(15);
+				getline(cin, input);
+				if (input != "")
+				{
+					addTailFNode(current, createFNode(input));
+					drawHeaderAndTab();
+					drawFavorite(current);
+				}
+			}
+		}
+	}
+}
+void moveLFNode(FNode *current)
+{
 	ShowCur(0);
-	bool  isCenter = false;
+	bool isCenter = false;
 
 	FNode *accumulator = current->LFNode.head;
 	highline(accumulator, bgColor, textColor, isCenter);
 
-	while(true) {
-		if(_kbhit()) {
+	while (true)
+	{
+		if (_kbhit())
+		{
 			char c = _getch();
-			if(c == -32) {
+			if (c == -32)
+			{
 				c = _getch();
-				if(c == 80) {
+				if (c == 80)
+				{
 					highline(accumulator, 1, textColor, isCenter);
-					if(accumulator == current->LFNode.tail) moveLFUrl(current, true);
-					else {
+					if (accumulator == current->LFNode.tail)
+						moveLFUrl(current, true);
+					else
+					{
 						accumulator = accumulator->next;
 						highline(accumulator, bgColor, textColor, isCenter);
 					}
 				}
-				else if (c == 72) {
+				else if (c == 72)
+				{
 					highline(accumulator, 1, textColor, isCenter);
-					if(accumulator == current->LFNode.head) moveLFUrl(current, false);
-					else {
+					if (accumulator == current->LFNode.head)
+						moveLFUrl(current, false);
+					else
+					{
 						accumulator = accumulator->prev;
 						highline(accumulator, bgColor, textColor, isCenter);
 					}
 				}
 			}
-			else if(c == 13) {
+			else if (c == 13)
+			{
 				drawHeaderAndTab();
 				drawFavorite(accumulator);
 			}
@@ -906,9 +976,9 @@ void moveLFNode(FNode *current) {
 	}
 }
 
-
 template <typename T>
-void assignValue(T *node, int x, int y, int w, int h) {
+void assignValue(T *node, int x, int y, int w, int h)
+{
 	node->x = x;
 	node->y = y;
 	node->w = w;
