@@ -82,10 +82,63 @@ void addTailFNode(FNode *root, FNode *newFNode) {
 	}
 }
 
-void removeFNode(FNode *p) {
-	
+/*void removeFNode(LFNode &list, FNode *x) {
+	if (list.head == NULL) return;
+    else {
+        if (list.head == list.tail && x == list.head) {
+            list.head = NULL;
+            list.tail = NULL;
+        }
+        else if (x == list.head) {
+            list.head = list.head->next;
+            x->next->prev = NULL;
+        }
+        else if (x == list.tail) {
+            list.tail = list.tail->prev;
+            x->prev->next = NULL;      
+        }
+        else {
+            x->prev->next = x->next;
+            x->next->prev = x->prev;
+        }
+        delete x;
+    }
 }
-
+*/
+FNode* SearchFNode(FNode *list, FNode *x)
+{
+   FNode *i = list->LFNode.head;
+   while (i && i != x)
+      i = i->next;
+   return i;
+}
+void findAndDeleteFN(FNode *list, FNode *x)
+{
+   FNode* result = SearchFNode(list, x);
+   if (result)
+   {
+        if (list->LFNode.head == NULL) return;
+    else {
+        if (list->LFNode.head == list->LFNode.tail && x == list->LFNode.head) {
+            list->LFNode.head = NULL;
+            list->LFNode.tail = NULL;
+        }
+        else if (x == list->LFNode.head) {
+            list->LFNode.head = list->LFNode.head->next;
+            x->next->prev = NULL;
+        }
+        else if (x == list->LFNode.tail) {
+            list->LFNode.tail = list->LFNode.tail->prev;
+            x->prev->next = NULL;      
+        }
+        else {
+            x->prev->next = x->next;
+            x->next->prev = x->prev;
+        }
+        delete x;
+    }
+   }
+}
 void initFolder(FNode *root) {
 
   addTail(root->LUrl, createNode("facebook.com"));

@@ -25,6 +25,10 @@ LTab listTab;
 Tab *currentTab;
 Node *temp_Delete = NULL;
 Node *temp_Delete_url = NULL;
+Node *tempNodeDele_FV = NULL;
+int flag = 2;
+FNode *tempListDele_FV = NULL;
+FNode *tempFNodeDele_FV = NULL;
 FNode *root = createFNode("ROOT");
 
 int xT = 30;
@@ -83,7 +87,7 @@ void drawInputButton(FNode *current);
 int main()
 {
 	// khoi tao duy nhat 1 lan
-	set_console_size(1200, 1000);
+	set_console_size(2000, 1000);
 	initVariable();
 	initTab();
 
@@ -413,7 +417,7 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 								drawBrowser();
 							}
 						}
-						else
+						else if(viewBookMark)
 						{
 							if (temp_Delete_url != NULL)
 							{
@@ -425,6 +429,19 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 								removeAllNode(listBookMark);
 								drawBrowser();
 							}
+						}
+						else if(viewFavorite)
+						{
+							if (flag == 1)
+							{
+								removeNode(tempListDele_FV->LUrl,tempNodeDele_FV);
+							}
+							else if (flag == 0)
+							{
+								findAndDeleteFN(tempListDele_FV,tempFNodeDele_FV);
+							}
+							drawHeaderAndTab();
+							drawFavorite(tempListDele_FV);
 						}
 					}
 					else if (accumulator->url == "No")
@@ -690,8 +707,12 @@ void drawDeleLS(listUrl &listLS, string key, int t)
 		cout << "Xoa lich su ngay " << key << " ? " << endl;
 	else if (t == 0)
 		cout << "Ban co chac muon xoa dia chi nay khong?" << endl;
+	else if (t == -1)
+		cout << "Ban co muon xoa dia chi "<< key << " ? " << endl;
+	else if (t == -2)
+		cout << "Ban co muon xoa folder " << key << " ? " << endl;
 	else
-		cout << "Ban co muon xoa het tat ca ?" << endl;
+		cout << " Ban co muon xoa tat ca ? " << endl;
 	addTail(Answer, createNode("Yes", "", x, y, w, h));
 	addTail(Answer, createNode("No", "", x, y + 2, w, h));
 	n_box(Answer, 1, textColor, false);
@@ -781,6 +802,11 @@ void drawSquareTab(string content, int x = 0, int y = 0, bool isFocus = false)
 
 void drawFavorite(FNode *current)
 {
+	if (current != NULL)
+	{
+		gotoXY(105, 6);
+		cout << " [!] XOA LINK/FOLDER : NHAN PHIM BACKSPACE" << endl;
+	}
 	if (current->url != "|/-/| ROOT")
 	{
 		gotoXY(positionX[2], 6);
@@ -902,6 +928,15 @@ void moveLFUrl(FNode *current, bool isHead)
 					drawFavorite(current);
 				}
 			}
+			else if (c==8)
+			{
+				flag = 1;
+				tempListDele_FV = current;
+				tempNodeDele_FV = accumulator;	
+				drawDeleLS(current->LUrl, accumulator->url,-1);
+				drawHeaderAndTab();
+				drawFavorite(current);
+			}
 		}
 	}
 }
@@ -977,6 +1012,15 @@ void moveLFNode(FNode *current)
 			{
 				drawHeaderAndTab();
 				drawFavorite(accumulator);
+			}
+			else if (c == 8)
+			{
+				flag =0;
+				tempListDele_FV = current;
+				tempFNodeDele_FV = accumulator;
+				drawDeleLS(current->LUrl, accumulator->url,-2);
+				drawHeaderAndTab();
+				drawFavorite(current);
 			}
 		}
 	}
