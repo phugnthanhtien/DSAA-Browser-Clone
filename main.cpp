@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <cstdlib>
 #include "mylib.h"
 #include "Tab.h"
 #include "docghifile.h"
@@ -48,6 +49,8 @@ void initTab();
 
 template <typename T>
 void assignValue(T *node, int x, int y, int w, int h);
+
+void Exit();
 
 template <typename T>
 void box(T *header, int b_color, int t_color, bool isCenter);
@@ -177,6 +180,7 @@ void moveTab()
 					temp = currentTab->next;
 				deleteTab(listTab, currentTab);
 				currentTab = temp;
+				if(!currentTab) Exit();
 				drawSquareTab(currentTab->currentUrl->url, currentTab->square.x, currentTab->square.y, true);
 				drawBrowser();
 			}
@@ -653,6 +657,8 @@ void moveHeader(T *accumulator, listUrl &listHeader)
 					ghiFile(listLS, "url.txt");
 					ghiFile(listBookMark, "bookMark.txt");
 					// khi exit thi cua so nao se hien len?
+					system("cls");
+					Exit();
 				}
 				currentTab->currentHeader = accumulator;
 				drawBrowser();
@@ -983,4 +989,11 @@ void assignValue(T *node, int x, int y, int w, int h)
 	node->y = y;
 	node->w = w;
 	node->h = h;
+}
+
+void Exit() {
+	system("cls");
+	textcolor(4);
+	cout << "Your application has been closed" << endl;
+	exit(0);
 }
