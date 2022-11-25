@@ -896,7 +896,7 @@ void moveLFUrl(FNode *current, bool isHead)
 						gotoXY(108, 8);
 						textcolor(14);
 						cout << "Url da duoc them vao";
-						sleep(1);
+						Sleep(1);
 					}
 					drawHeaderAndTab();
 					drawFavorite(current);
