@@ -31,7 +31,7 @@ FNode *tempListDele_FV = NULL;
 FNode *tempFNodeDele_FV = NULL;
 FNode *root = createFNode("ROOT");
 
-int xT = 30;
+int xT = 40;
 int yT = 10;
 int t_color = 12;
 
@@ -469,6 +469,20 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 					else if (accumulator->url == "Open new tab")
 					{
 						initTab();
+					}
+					else
+					{
+						if(viewHistory || viewBookMark)
+						{
+							addAfter(currentTab->listUrl, createNode(accumulator->url), currentTab->currentUrl);
+							addTail(listLS, createNode(accumulator->url));
+							currentTab->currentUrl = currentTab->currentUrl->next;
+							currentTab->currentHeader = currentTab->listHeader.head;
+							if (viewHistory) 
+								viewHistory = false;
+							else viewBookMark = false;
+							drawBrowser();
+						}
 					}
 					drawBrowser();
 				}
@@ -926,6 +940,15 @@ void moveLFUrl(FNode *current, bool isHead)
 					}
 					drawHeaderAndTab();
 					drawFavorite(current);
+				}
+				else if(viewFavorite)
+				{
+					addAfter(currentTab->listUrl, createNode(accumulator->url), currentTab->currentUrl);
+					addTail(listLS, createNode(accumulator->url));
+					currentTab->currentUrl = currentTab->currentUrl->next;
+					currentTab->currentHeader = currentTab->listHeader.head;
+					viewFavorite = false;
+					drawBrowser();
 				}
 			}
 			else if (c==8)
