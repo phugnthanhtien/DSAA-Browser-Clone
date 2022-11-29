@@ -955,7 +955,10 @@ void drawInputButton(FNode *current)
 		if (_kbhit())
 		{
 			char c = _getch();
-
+			if (c == 27) {
+				drawBrowser();
+			}
+			else 
 			{
 				textcolor(15);
 				getline(cin, input);
