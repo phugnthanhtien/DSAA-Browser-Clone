@@ -220,18 +220,15 @@ void drawBrowser()
 {
 	if (viewHistory)
 	{
-		addTail(currentTab->listUrl, createNode("chrome://history"));
-		currentTab->currentUrl = currentTab->listUrl.tail;
+		currentTab->currentUrl = createNode("chrome://history");
 		drawHeaderAndTab();
 		drawList(listLS);
 		movePointer(listLS, currentTab->listHeader, false);
 	}
 	else if (viewBookMark)
 	{
-		addTail(currentTab->listUrl, createNode("chrome://bookmark"));
-		currentTab->currentUrl = currentTab->listUrl.tail;
+		currentTab->currentUrl = createNode("chrome://bookmark");
 		drawHeaderAndTab();
-		listBookMark.tail->next = NULL;
 		drawList(listBookMark);
 		movePointer(listBookMark, currentTab->listHeader, false);
 	}
@@ -577,22 +574,7 @@ void Header(listUrl &listHeader)
 	{
 		if (accumulator->x == positionX[3])
 		{
-			if (viewHistory)
-			{
-				accumulator->url = "chrome://history";
-			}
-			else if (viewBookMark)
-			{
-				accumulator->url = "chrome://bookmarks";
-			}
-			else if (viewFavorite)
-			{
-				accumulator->url = "chrome://favourite";
-			}
-			else
-			{
-				accumulator->url = currentTab->currentUrl->url;
-			}				
+			accumulator->url = currentTab->currentUrl->url;			
 		}
 		box(accumulator, 1, textColor, true);
 		if (accumulator->x == positionX[4] && currentTab->currentUrl->isBookMark)
