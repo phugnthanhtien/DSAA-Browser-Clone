@@ -478,6 +478,12 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 					{
 						initTab();
 					}
+					else if(accumulator->url == "chrome://history")
+					{
+						drawHeaderAndTab();
+						drawList(listLS);
+						movePointer(listLS, currentTab->listHeader, false);
+					}
 					else
 					{
 						if(viewHistory || viewBookMark)
