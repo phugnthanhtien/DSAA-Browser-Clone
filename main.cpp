@@ -30,7 +30,7 @@ int flag = 2;
 FNode *tempListDele_FV = NULL;
 FNode *tempFNodeDele_FV = NULL;
 FNode *root = createFNode("ROOT");
-
+FNode*current_folder = root;
 int xT = 40;
 int yT = 10;
 int t_color = 12;
@@ -222,12 +222,11 @@ void drawBrowser()
 	{
 		drawFavorite(root);
 	}
-
 	if (currentTab->currentHeader->url == "Option")
 	{
 		drawOption(currentTab->listHeader);
 	}
-	else
+	else 
 	{
 		ascii_art(currentTab->currentUrl->url, xT, yT, t_color);
 		if (currentTab->currentUrl->url == homeName)
@@ -284,10 +283,11 @@ void drawList(listUrl list)
 {
 	if (list.head != NULL)
 	{
+		textcolor(11);
 		gotoXY(15, 6);
-		cout << "XOA LICH SU : NHAN PHIM BACKSPACE" << endl;
+		cout << "XOA 1 DIA CHI LICH SU/BOOKMARK: NHAN PHIM BACKSPACE" << endl;
 		gotoXY(15, 7);
-		cout << "XOA TOAN BO LICH SU: NHAN PHIM DELETE" << endl;
+		cout << "XOA TOAN BO LICH SU/BOOKMARK: NHAN PHIM DELETE" << endl;
 		gotoXY(15, 8);
 		cout << "XOA LICH SU TRONG MOT NGAY: NHAN PHIM SPACE" << endl;
 		Node *accumulator = list.head;
@@ -312,7 +312,7 @@ void drawList(listUrl list)
 			accumulator->w = w;
 			accumulator->h = h;
 			box(accumulator, 1, textColor, false);
-			if (i != 0)
+			if (i != 0 && accumulator->prev->dmy == cur_dmy)
 			{
 				gotoXY(accumulator->x, accumulator->y);
 				cout << char(195);
@@ -374,7 +374,7 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 						}
 						else if (viewBookMark)
 						{
-							drawDeleLS(listLS, accumulator->url, 2);
+							drawDeleLS(listBookMark, accumulator->url, 2);
 						}
 					}
 				}
@@ -422,6 +422,7 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 							if (temp_Delete_url != NULL)
 							{
 								removeNode(listBookMark, temp_Delete_url);
+								temp_Delete_url = NULL;
 								drawBrowser();
 							}
 							else
@@ -642,6 +643,23 @@ void moveHeader(T *accumulator, listUrl &listHeader)
 					listHeader.head->prev = NULL;
 					highline(accumulator, 1, textColor, true);
 					moveTab();
+				}
+				else if (c == 80)
+				{
+					if (viewFavorite)
+					{
+						listHeader.tail->next = NULL;
+						listHeader.head->prev = NULL;
+						drawHeaderAndTab();
+						drawFavorite(current_folder);
+						moveFavorite(current_folder);
+					}
+					else
+					{
+						listHeader.tail->next = NULL;
+						listHeader.head->prev = NULL;
+						drawBrowser();
+					}
 				}
 				currentTab->currentHeader = accumulator;
 			}
@@ -909,7 +927,10 @@ void moveLFUrl(FNode *current, bool isHead)
 				{
 					highline(accumulator, 1, textColor, isCenter);
 					if (accumulator == current->LUrl.head)
+					{
+						current_folder = current;
 						moveHeader(accumulator, currentTab->listHeader);
+					}
 					else
 					{
 						accumulator = accumulator->prev;
@@ -968,9 +989,11 @@ void drawInputButton(FNode *current)
 {
 	string input;
 	box(createNode("", "", 105, 9, 30, 2), 0, 3, false);
-	gotoXY(108, 8);
+	gotoXY(108, 7);
 	textcolor(14);
-	cout << "Enter name of your folder";
+	cout << "Enter name of your folder"<< endl;
+	gotoXY(111,8);
+	cout << "[NHAN ESC DE THOAT]";
 	gotoXY(108, 10);
 	ShowCur(1);
 	while (true)
