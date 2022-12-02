@@ -505,7 +505,7 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 					{
 						initTab();
 					}
-					else if(accumulator->url == "chrome://history")
+					else if (accumulator->url == "chrome://history")
 					{
 						drawHeaderAndTab();
 						drawList(listLS);
@@ -523,6 +523,12 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 							if (accumulator->isBookMark == true)
 								listLS.tail->isBookMark = true;
 							currentTab->currentUrl = currentTab->currentUrl->next;
+							currentTab->currentHeader = currentTab->listHeader.head;
+							if (viewHistory)
+								viewHistory = false;
+							else
+								viewBookMark = false;
+							drawBrowser();
 						}
 						currentTab->currentHeader = currentTab->listHeader.head;
 						if (viewHistory)
@@ -580,7 +586,14 @@ void Header(listUrl &listHeader)
 	{
 		if (accumulator->x == positionX[3])
 		{
-			accumulator->url = currentTab->currentUrl->url;			
+			if (viewFavorite)
+			{
+				accumulator->url = "chrome://favourite";
+			}
+			else
+			{
+				accumulator->url = currentTab->currentUrl->url;
+			}
 		}
 		box(accumulator, 1, textColor, true);
 		if (accumulator->x == positionX[4] && currentTab->currentUrl->isBookMark)
