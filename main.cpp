@@ -312,7 +312,7 @@ void drawList(listUrl list)
 			accumulator->w = w;
 			accumulator->h = h;
 			box(accumulator, 1, textColor, false);
-			if (i != 0)
+			if (i != 0 && accumulator->prev->dmy == cur_dmy)
 			{
 				gotoXY(accumulator->x, accumulator->y);
 				cout << char(195);
