@@ -250,7 +250,6 @@ void drawBrowser()
 	{
 		drawHeaderAndTab();
 		listLS.tail->next = NULL;
-		viewHistory = true;
 		drawList(listLS);
 		movePointer(listLS, currentTab->listHeader, false);
 	}
@@ -259,7 +258,6 @@ void drawBrowser()
 
 		drawHeaderAndTab();
 		listBookMark.tail->next = NULL;
-		viewBookMark = true;
 		drawList(listBookMark);
 		movePointer(listBookMark, currentTab->listHeader, false);
 	}
@@ -510,15 +508,18 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 					}
 					else if (accumulator->url == "chrome://history")
 					{
-						currentTab->currentUrl = createNode("chrome://history");
+						addTail(currentTab->listUrl, createNode("chrome://history"));
+						currentTab->currentUrl = currentTab->listUrl.tail;
 						drawHeaderAndTab();
 						drawList(listLS);
 						movePointer(listLS, currentTab->listHeader, false);
 					}
 					else if (accumulator->url == "chrome://bookmark")
 					{
-						currentTab->currentUrl = createNode("chrome://history");
+						addTail(currentTab->listUrl, createNode("chrome://bookmark"));
+						currentTab->currentUrl = currentTab->listUrl.tail;
 						drawHeaderAndTab();
+						listBookMark.tail->next = NULL;
 						drawList(listBookMark);
 						movePointer(listBookMark, currentTab->listHeader, false);
 					}
