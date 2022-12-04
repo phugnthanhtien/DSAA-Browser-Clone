@@ -30,7 +30,7 @@ int flag = 2;
 FNode *tempListDele_FV = NULL;
 FNode *tempFNodeDele_FV = NULL;
 FNode *root = createFNode("ROOT");
-FNode*current_folder = root;
+FNode*currentFolder = root;
 int xT = 40;
 int yT = 10;
 int t_color = 12;
@@ -651,8 +651,8 @@ void moveHeader(T *accumulator, listUrl &listHeader)
 						listHeader.tail->next = NULL;
 						listHeader.head->prev = NULL;
 						drawHeaderAndTab();
-						drawFavorite(current_folder);
-						moveFavorite(current_folder);
+						drawFavorite(currentFolder);
+						moveFavorite(currentFolder);
 					}
 					else
 					{
@@ -928,7 +928,7 @@ void moveLFUrl(FNode *current, bool isHead)
 					highline(accumulator, 1, textColor, isCenter);
 					if (accumulator == current->LUrl.head)
 					{
-						current_folder = current;
+						currentFolder = current;
 						moveHeader(accumulator, currentTab->listHeader);
 					}
 					else
@@ -977,7 +977,8 @@ void moveLFUrl(FNode *current, bool isHead)
 				flag = 1;
 				tempListDele_FV = current;
 				tempNodeDele_FV = accumulator;	
-				drawDeleLS(current->LUrl, accumulator->url,-1);
+				if(current->LUrl.head != accumulator && current->LUrl.head->next != accumulator) 
+					drawDeleLS(current->LUrl, accumulator->url,-1);
 				drawHeaderAndTab();
 				drawFavorite(current);
 			}
