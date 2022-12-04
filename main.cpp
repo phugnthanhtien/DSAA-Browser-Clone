@@ -246,21 +246,6 @@ void drawBrowser()
 	{
 		drawOption(currentTab->listHeader);
 	}
-	else if (currentTab->currentUrl->url == "chrome://history")
-	{
-		drawHeaderAndTab();
-		listLS.tail->next = NULL;
-		drawList(listLS);
-		movePointer(listLS, currentTab->listHeader, false);
-	}
-	else if (currentTab->currentUrl->url == "chrome://bookmark")
-	{
-
-		drawHeaderAndTab();
-		listBookMark.tail->next = NULL;
-		drawList(listBookMark);
-		movePointer(listBookMark, currentTab->listHeader, false);
-	}
 	else
 	{
 		ascii_art(currentTab->currentUrl->url, xT, yT, t_color);
