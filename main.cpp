@@ -50,6 +50,7 @@ void initVariable();
 void initHeader(listUrl &listHeader);
 void initViewList(listUrl &list);
 void initTab();
+void initBookMark();
 
 template <typename T>
 void assignValue(T *node, int x, int y, int w, int h);
@@ -106,6 +107,7 @@ void initVariable()
 	docFile(listBookMark, "bookMark.txt");
 	docFile(listLS, "url.txt");
 	initListTab(listTab);
+	initBookMark();
 	initFolder(root);
 }
 
@@ -125,7 +127,15 @@ void initTab()
 	addTab(listTab, createTab(listSearch, listHeader));
 	currentTab = listTab.tail;
 }
-
+void initBookMark()
+{
+	Node *temp = listBookMark.head;
+	while (temp != NULL)
+	{
+		temp->isBookMark = true;
+		temp = temp->next;
+	}
+}
 void drawListTab()
 {
 	Tab *accumulator = listTab.head;
@@ -184,7 +194,8 @@ void moveTab()
 					temp = currentTab->next;
 				deleteTab(listTab, currentTab);
 				currentTab = temp;
-				if(!currentTab) Exit();
+				if (!currentTab)
+					Exit();
 				drawSquareTab(currentTab->currentUrl->url, currentTab->square.x, currentTab->square.y, true);
 				drawBrowser();
 			}
@@ -207,26 +218,52 @@ void drawHeaderAndTab()
 
 void drawBrowser()
 {
-	drawHeaderAndTab();
 	if (viewHistory)
 	{
+		addTail(currentTab->listUrl, createNode("chrome://history"));
+		currentTab->currentUrl = currentTab->listUrl.tail;
+		drawHeaderAndTab();
 		drawList(listLS);
 		movePointer(listLS, currentTab->listHeader, false);
 	}
 	else if (viewBookMark)
 	{
+		addTail(currentTab->listUrl, createNode("chrome://bookmark"));
+		currentTab->currentUrl = currentTab->listUrl.tail;
+		drawHeaderAndTab();
+		listBookMark.tail->next = NULL;
 		drawList(listBookMark);
 		movePointer(listBookMark, currentTab->listHeader, false);
 	}
 	else if (viewFavorite)
 	{
+		drawHeaderAndTab();
 		drawFavorite(root);
 	}
+	else
+		drawHeaderAndTab();
 	if (currentTab->currentHeader->url == "Option")
 	{
 		drawOption(currentTab->listHeader);
 	}
-	else 
+	else if (currentTab->currentUrl->url == "chrome://history")
+	{
+		drawHeaderAndTab();
+		listLS.tail->next = NULL;
+		viewHistory = true;
+		drawList(listLS);
+		movePointer(listLS, currentTab->listHeader, false);
+	}
+	else if (currentTab->currentUrl->url == "chrome://bookmark")
+	{
+
+		drawHeaderAndTab();
+		listBookMark.tail->next = NULL;
+		viewBookMark = true;
+		drawList(listBookMark);
+		movePointer(listBookMark, currentTab->listHeader, false);
+	}
+	else
 	{
 		ascii_art(currentTab->currentUrl->url, xT, yT, t_color);
 		if (currentTab->currentUrl->url == homeName)
@@ -417,7 +454,7 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 								drawBrowser();
 							}
 						}
-						else if(viewBookMark)
+						else if (viewBookMark)
 						{
 							if (temp_Delete_url != NULL)
 							{
@@ -431,15 +468,15 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 								drawBrowser();
 							}
 						}
-						else if(viewFavorite)
+						else if (viewFavorite)
 						{
 							if (flag == 1)
 							{
-								removeNode(tempListDele_FV->LUrl,tempNodeDele_FV);
+								removeNode(tempListDele_FV->LUrl, tempNodeDele_FV);
 							}
 							else if (flag == 0)
 							{
-								findAndDeleteFN(tempListDele_FV,tempFNodeDele_FV);
+								findAndDeleteFN(tempListDele_FV, tempFNodeDele_FV);
 							}
 							drawHeaderAndTab();
 							drawFavorite(tempListDele_FV);
@@ -473,17 +510,22 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 					}
 					else
 					{
-						if(viewHistory || viewBookMark)
+						if (viewHistory || viewBookMark)
 						{
-							addAfter(currentTab->listUrl, createNode(accumulator->url), currentTab->currentUrl);
+							Node*temp = createNode(accumulator->url);	
+							if (accumulator->isBookMark == true)
+								temp->isBookMark = true;
+							addAfter(currentTab->listUrl,temp, currentTab->currentUrl);
 							addTail(listLS, createNode(accumulator->url));
+							if (accumulator->isBookMark == true)
+								listLS.tail->isBookMark = true;
 							currentTab->currentUrl = currentTab->currentUrl->next;
-							currentTab->currentHeader = currentTab->listHeader.head;
-							if (viewHistory) 
-								viewHistory = false;
-							else viewBookMark = false;
-							drawBrowser();
 						}
+						currentTab->currentHeader = currentTab->listHeader.head;
+						if (viewHistory)
+							viewHistory = false;
+						else
+							viewBookMark = false;
 					}
 					drawBrowser();
 				}
@@ -535,7 +577,15 @@ void Header(listUrl &listHeader)
 	{
 		if (accumulator->x == positionX[3])
 		{
-			accumulator->url = currentTab->currentUrl->url;
+			if (viewFavorite)
+			{
+				accumulator->url = "chrome://favourite";
+			}
+			else
+			{
+				
+				accumulator->url = currentTab->currentUrl->url;
+			}
 		}
 		box(accumulator, 1, textColor, true);
 		if (accumulator->x == positionX[4] && currentTab->currentUrl->isBookMark)
@@ -697,9 +747,15 @@ void moveHeader(T *accumulator, listUrl &listHeader)
 				{
 					currentTab->currentUrl->isBookMark = !currentTab->currentUrl->isBookMark;
 					if (currentTab->currentUrl->isBookMark)
+					{
 						addTail(listBookMark, createNode(currentTab->currentUrl->url));
+						listBookMark.tail->isBookMark = true;
+					}
 					else
+					{
 						findAndDelete(listBookMark, currentTab->currentUrl->url);
+						viewBookMark = true;
+					}
 				}
 				else if (accumulator->url == "X")
 				{
@@ -740,7 +796,7 @@ void drawDeleLS(listUrl &listLS, string key, int t)
 	else if (t == 0)
 		cout << "Ban co chac muon xoa dia chi nay khong?" << endl;
 	else if (t == -1)
-		cout << "Ban co muon xoa dia chi "<< key << " ? " << endl;
+		cout << "Ban co muon xoa dia chi " << key << " ? " << endl;
 	else if (t == -2)
 		cout << "Ban co muon xoa folder " << key << " ? " << endl;
 	else
@@ -962,7 +1018,7 @@ void moveLFUrl(FNode *current, bool isHead)
 					drawHeaderAndTab();
 					drawFavorite(current);
 				}
-				else if(viewFavorite)
+				else if (viewFavorite)
 				{
 					addAfter(currentTab->listUrl, createNode(accumulator->url), currentTab->currentUrl);
 					addTail(listLS, createNode(accumulator->url));
@@ -972,7 +1028,7 @@ void moveLFUrl(FNode *current, bool isHead)
 					drawBrowser();
 				}
 			}
-			else if (c==8)
+			else if (c == 8)
 			{
 				flag = 1;
 				tempListDele_FV = current;
@@ -1002,10 +1058,11 @@ void drawInputButton(FNode *current)
 		if (_kbhit())
 		{
 			char c = _getch();
-			if (c == 27) {
+			if (c == 27)
+			{
 				drawBrowser();
 			}
-			else 
+			else
 			{
 				textcolor(15);
 				getline(cin, input);
@@ -1065,10 +1122,10 @@ void moveLFNode(FNode *current)
 			}
 			else if (c == 8)
 			{
-				flag =0;
+				flag = 0;
 				tempListDele_FV = current;
 				tempFNodeDele_FV = accumulator;
-				drawDeleLS(current->LUrl, accumulator->url,-2);
+				drawDeleLS(current->LUrl, accumulator->url, -2);
 				drawHeaderAndTab();
 				drawFavorite(current);
 			}
@@ -1085,7 +1142,8 @@ void assignValue(T *node, int x, int y, int w, int h)
 	node->h = h;
 }
 
-void Exit() {
+void Exit()
+{
 	system("cls");
 	textcolor(4);
 	cout << "Your application has been closed" << endl;
