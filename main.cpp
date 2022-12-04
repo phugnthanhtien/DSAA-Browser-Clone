@@ -50,6 +50,7 @@ void initVariable();
 void initHeader(listUrl &listHeader);
 void initViewList(listUrl &list);
 void initTab();
+void initBookMark();
 
 template <typename T>
 void assignValue(T *node, int x, int y, int w, int h);
@@ -106,6 +107,7 @@ void initVariable()
 	docFile(listBookMark, "bookMark.txt");
 	docFile(listLS, "url.txt");
 	initListTab(listTab);
+	initBookMark();
 	initFolder(root);
 }
 
@@ -125,7 +127,15 @@ void initTab()
 	addTab(listTab, createTab(listSearch, listHeader));
 	currentTab = listTab.tail;
 }
-
+void initBookMark()
+{
+	Node *temp = listBookMark.head;
+	while (temp != NULL)
+	{
+		temp->isBookMark = true;
+		temp = temp->next;
+	}
+}
 void drawListTab()
 {
 	Tab *accumulator = listTab.head;
@@ -240,6 +250,7 @@ void drawBrowser()
 	{
 		drawHeaderAndTab();
 		listLS.tail->next = NULL;
+		viewHistory = true;
 		drawList(listLS);
 		movePointer(listLS, currentTab->listHeader, false);
 	}
@@ -248,6 +259,7 @@ void drawBrowser()
 
 		drawHeaderAndTab();
 		listBookMark.tail->next = NULL;
+		viewBookMark = true;
 		drawList(listBookMark);
 		movePointer(listBookMark, currentTab->listHeader, false);
 	}
@@ -496,37 +508,24 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 					{
 						initTab();
 					}
-					else if (accumulator->url == "chrome://history")
-					{
-						addTail(currentTab->listUrl, createNode("chrome://history"));
-						currentTab->currentUrl = currentTab->listUrl.tail;
-						drawHeaderAndTab();
-						drawList(listLS);
-						movePointer(listLS, currentTab->listHeader, false);
-					}
-					else if (accumulator->url == "chrome://bookmark")
-					{
-						addTail(currentTab->listUrl, createNode("chrome://bookmark"));
-						currentTab->currentUrl = currentTab->listUrl.tail;
-						drawHeaderAndTab();
-						listBookMark.tail->next = NULL;
-						drawList(listBookMark);
-						movePointer(listBookMark, currentTab->listHeader, false);
-					}
 					else
 					{
 						if (viewHistory || viewBookMark)
 						{
-							addAfter(currentTab->listUrl, createNode(accumulator->url), currentTab->currentUrl);
+							Node*temp = createNode(accumulator->url);	
+							if (accumulator->isBookMark == true)
+								temp->isBookMark = true;
+							addAfter(currentTab->listUrl,temp, currentTab->currentUrl);
 							addTail(listLS, createNode(accumulator->url));
+							if (accumulator->isBookMark == true)
+								listLS.tail->isBookMark = true;
 							currentTab->currentUrl = currentTab->currentUrl->next;
-							currentTab->currentHeader = currentTab->listHeader.head;
-							if (viewHistory)
-								viewHistory = false;
-							else
-								viewBookMark = false;
-							drawBrowser();
 						}
+						currentTab->currentHeader = currentTab->listHeader.head;
+						if (viewHistory)
+							viewHistory = false;
+						else
+							viewBookMark = false;
 					}
 					drawBrowser();
 				}
@@ -584,6 +583,7 @@ void Header(listUrl &listHeader)
 			}
 			else
 			{
+				
 				accumulator->url = currentTab->currentUrl->url;
 			}
 		}
@@ -747,9 +747,15 @@ void moveHeader(T *accumulator, listUrl &listHeader)
 				{
 					currentTab->currentUrl->isBookMark = !currentTab->currentUrl->isBookMark;
 					if (currentTab->currentUrl->isBookMark)
+					{
 						addTail(listBookMark, createNode(currentTab->currentUrl->url));
+						listBookMark.tail->isBookMark = true;
+					}
 					else
+					{
 						findAndDelete(listBookMark, currentTab->currentUrl->url);
+						viewBookMark = true;
+					}
 				}
 				else if (accumulator->url == "X")
 				{
