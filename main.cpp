@@ -598,14 +598,7 @@ void Header(listUrl &listHeader)
 	{
 		if (accumulator->x == positionX[3])
 		{
-			if (viewFavorite)
-			{
-				accumulator->url = "chrome://favourite";
-			}
-			else
-			{
 				accumulator->url = currentTab->currentUrl->url;
-			}
 		}
 		box(accumulator, 1, textColor, true);
 		if (accumulator->x == positionX[4] && currentTab->currentUrl->isBookMark)
