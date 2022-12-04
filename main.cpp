@@ -106,7 +106,7 @@ int main()
 
 void initConstant() {
 	constant.history = "chrome://history";
-	constant.bookmark = "chrome://history";
+	constant.bookmark = "chrome://bookmark";
 	constant.viewHistory = "View History";
 	constant.viewBookmark = "View Bookmark";
 	constant.viewFavorite = "View your Favorite";
@@ -236,15 +236,11 @@ void drawBrowser()
 	drawHeaderAndTab();
 	if (viewHistory)
 	{
-		addTail(currentTab->listUrl, createNode(constant.history));
-		currentTab->currentUrl = currentTab->listUrl.tail;
 		drawList(listLS);
 		movePointer(listLS, currentTab->listHeader, false);
 	}
 	else if (viewBookMark)
 	{
-		addTail(currentTab->listUrl, createNode(constant.bookmark));
-		currentTab->currentUrl = currentTab->listUrl.tail;
 		listBookMark.tail->next = NULL;
 		drawList(listBookMark);
 		movePointer(listBookMark, currentTab->listHeader, false);
@@ -310,13 +306,13 @@ void createSearchBar(listUrl &listSearch, listUrl &listHeader)
 			{
 				textcolor(15);
 				getline(cin, search);
-				if (search != "")
+				if (search != "" && currentTab->currentUrl->url != search)
 				{
 					addAfter(listSearch, createNode(search), currentTab->currentUrl);
 					addTail(listLS, createNode(search));
 					currentTab->currentUrl = currentTab->currentUrl->next;
-					drawBrowser();
 				}
+				drawBrowser();
 			}
 		}
 	}
@@ -494,12 +490,20 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 					}
 					else if (accumulator->url == constant.viewHistory)
 					{
+						if(currentTab->currentUrl->url != constant.history) {
+							addAfter(currentTab->listUrl, createNode(constant.history), currentTab->currentUrl);
+							currentTab->currentUrl = currentTab->listUrl.tail;
+						}
 						viewHistory = true;
 						viewBookMark = false;
 						viewFavorite = false;
 					}
 					else if (accumulator->url == constant.viewBookmark)
 					{
+						if(currentTab->currentUrl->url != constant.bookmark) {
+							addAfter(currentTab->listUrl, createNode(constant.bookmark), currentTab->currentUrl);
+							currentTab->currentUrl = currentTab->listUrl.tail;
+						}
 						viewBookMark = true;
 						viewHistory = false;
 						viewFavorite = false;
@@ -514,17 +518,17 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 					{
 						initTab();
 					}
-					else if (accumulator->url == constant.viewHistory)
+					else if (accumulator->url == constant.history)
 					{
-						addTail(currentTab->listUrl, createNode(constant.history));
+						addAfter(currentTab->listUrl, createNode(constant.history), currentTab->currentUrl);
 						currentTab->currentUrl = currentTab->listUrl.tail;
 						drawHeaderAndTab();
 						drawList(listLS);
 						movePointer(listLS, currentTab->listHeader, false);
 					}
-					else if (accumulator->url == constant.viewBookmark)
+					else if (accumulator->url == constant.bookmark)
 					{
-						addTail(currentTab->listUrl, createNode(constant.bookmark));
+						addAfter(currentTab->listUrl, createNode(constant.bookmark), currentTab->currentUrl);
 						currentTab->currentUrl = currentTab->listUrl.tail;
 						drawHeaderAndTab();
 						listBookMark.tail->next = NULL;
@@ -761,8 +765,8 @@ void moveHeader(T *accumulator, listUrl &listHeader)
 				}
 				else if (accumulator->url == "Home" && currentTab->currentUrl->url != homeName)
 				{
-					addTail(currentTab->listUrl, createNode(homeName));
-					currentTab->currentUrl = currentTab->currentUrl->next;
+					addAfter(currentTab->listUrl, createNode(homeName), currentTab->currentUrl);
+					currentTab->currentUrl = currentTab->listUrl.tail;
 				}
 				else if (accumulator->url == "|||\\")
 				{
