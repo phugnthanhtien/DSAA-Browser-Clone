@@ -12,7 +12,13 @@
 
 using namespace std;
 
+class Enum {
+	public:
+	string history,	bookmark, viewHistory , viewBookmark, viewFavorite, openTab;
+};
+
 // global variable
+Enum constant;
 int positionX[7];
 int textColor = 15;
 int bgColor = 200;
@@ -46,6 +52,7 @@ int t_color = 12;
 //  enter: 13
 //  ESC: 27
 
+void initConstant();
 void initVariable();
 void initHeader(listUrl &listHeader);
 void initViewList(listUrl &list);
@@ -89,19 +96,26 @@ int main()
 {
 	// khoi tao duy nhat 1 lan
 	set_console_size(2000, 1000);
-	initVariable();
-	initTab();
+	 initVariable();
+	 initTab();
 
-	drawBrowser();
-	//	viewFavorite = true;  -> debug cho de~
-	//	drawFavorite(root);
-
+	 drawBrowser();
 	_getch();
 	return 0;
 }
 
+void initConstant() {
+	constant.history = "chrome://history";
+	constant.bookmark = "chrome://history";
+	constant.viewHistory = "View History";
+	constant.viewBookmark = "View Bookmark";
+	constant.viewFavorite = "View your Favorite";
+	constant.openTab = "Open New Tab";
+}
+
 void initVariable()
 {
+	initConstant();
 	createList(listBookMark);
 	createList(listLS);
 	docFile(listBookMark, "bookMark.txt");
@@ -109,6 +123,7 @@ void initVariable()
 	initListTab(listTab);
 	initBookMark();
 	initFolder(root);
+
 }
 
 void initTab()
@@ -218,48 +233,56 @@ void drawHeaderAndTab()
 
 void drawBrowser()
 {
+	drawHeaderAndTab();
 	if (viewHistory)
 	{
-		addTail(currentTab->listUrl, createNode("chrome://history"));
+		addTail(currentTab->listUrl, createNode(constant.history));
 		currentTab->currentUrl = currentTab->listUrl.tail;
-		drawHeaderAndTab();
 		drawList(listLS);
 		movePointer(listLS, currentTab->listHeader, false);
 	}
 	else if (viewBookMark)
 	{
-		addTail(currentTab->listUrl, createNode("chrome://bookmark"));
+		addTail(currentTab->listUrl, createNode(constant.bookmark));
 		currentTab->currentUrl = currentTab->listUrl.tail;
-		drawHeaderAndTab();
 		listBookMark.tail->next = NULL;
 		drawList(listBookMark);
 		movePointer(listBookMark, currentTab->listHeader, false);
 	}
 	else if (viewFavorite)
 	{
-		drawHeaderAndTab();
 		drawFavorite(root);
 	}
-	else
-		drawHeaderAndTab();
+
 	if (currentTab->currentHeader->url == "Option")
 	{
 		drawOption(currentTab->listHeader);
 	}
+	else if(currentTab->currentHeader->x == positionX[3]) {
+		ascii_art(currentTab->currentUrl->url, xT, yT, t_color);
+		createSearchBar(currentTab->listUrl, currentTab->listHeader);
+	}
 	else
 	{
-		ascii_art(currentTab->currentUrl->url, xT, yT, t_color);
-		if (currentTab->currentUrl->url == homeName)
-		{
-			//			drawBR();  -> debug cho de
+		if(currentTab->currentUrl->url == constant.history) {
+			drawList(listLS);
+			movePointer(listLS, currentTab->listHeader, false);
 		}
-		if (currentTab->currentUrl->url == homeName || currentTab->currentHeader->x == positionX[3])
-		{
-			createSearchBar(currentTab->listUrl, currentTab->listHeader);
+		else if(currentTab->currentUrl->url == constant.bookmark) {
+			drawList(listBookMark);
+			movePointer(listBookMark, currentTab->listHeader, false);
 		}
-		else
-		{
-			moveHeader(currentTab->listUrl.head, currentTab->listHeader);
+		else {
+			ascii_art(currentTab->currentUrl->url, xT, yT, t_color);
+			if (currentTab->currentUrl->url == homeName)
+			{
+				//			drawBR();  -> debug cho de
+				createSearchBar(currentTab->listUrl, currentTab->listHeader);
+			}
+			else
+			{
+				moveHeader(currentTab->listUrl.head, currentTab->listHeader);
+			}
 		}
 	}
 }
@@ -469,39 +492,39 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 					{
 						drawBrowser();
 					}
-					else if (accumulator->url == "View History")
+					else if (accumulator->url == constant.viewHistory)
 					{
 						viewHistory = true;
 						viewBookMark = false;
 						viewFavorite = false;
 					}
-					else if (accumulator->url == "View BookMark")
+					else if (accumulator->url == constant.viewBookmark)
 					{
 						viewBookMark = true;
 						viewHistory = false;
 						viewFavorite = false;
 					}
-					else if (accumulator->url == "View your Favorite")
+					else if (accumulator->url == constant.viewFavorite)
 					{
 						viewFavorite = true;
 						viewHistory = false;
 						viewBookMark = false;
 					}
-					else if (accumulator->url == "Open new tab")
+					else if (accumulator->url == constant.openTab)
 					{
 						initTab();
 					}
-					else if (accumulator->url == "chrome://history")
+					else if (accumulator->url == constant.viewHistory)
 					{
-						addTail(currentTab->listUrl, createNode("chrome://history"));
+						addTail(currentTab->listUrl, createNode(constant.history));
 						currentTab->currentUrl = currentTab->listUrl.tail;
 						drawHeaderAndTab();
 						drawList(listLS);
 						movePointer(listLS, currentTab->listHeader, false);
 					}
-					else if (accumulator->url == "chrome://bookmark")
+					else if (accumulator->url == constant.viewBookmark)
 					{
-						addTail(currentTab->listUrl, createNode("chrome://bookmark"));
+						addTail(currentTab->listUrl, createNode(constant.bookmark));
 						currentTab->currentUrl = currentTab->listUrl.tail;
 						drawHeaderAndTab();
 						listBookMark.tail->next = NULL;
@@ -775,10 +798,10 @@ void drawOption(listUrl &listHeader)
 	listUrl option;
 	createList(option);
 	int x = positionX[3] + 10, y = 10, w = 50, h = 2;
-	addTail(option, createNode("View History", "", x, y, w, h));
-	addTail(option, createNode("View BookMark", "", x, y += 2, w, h));
-	addTail(option, createNode("View your Favorite", "", x, y += 2, w, h));
-	addTail(option, createNode("Open new tab", "", x, y += 2, w, h));
+	addTail(option, createNode(constant.viewHistory, "", x, y, w, h));
+	addTail(option, createNode(constant.viewBookmark, "", x, y += 2, w, h));
+	addTail(option, createNode(constant.viewFavorite, "", x, y += 2, w, h));
+	addTail(option, createNode(constant.openTab, "", x, y += 2, w, h));
 	n_box(option, 1, textColor, false);
 	movePointer(option, listHeader, false);
 }
