@@ -246,23 +246,6 @@ void drawBrowser()
 	{
 		drawOption(currentTab->listHeader);
 	}
-	else if (currentTab->currentUrl->url == "chrome://history")
-	{
-		drawHeaderAndTab();
-		listLS.tail->next = NULL;
-		viewHistory = true;
-		drawList(listLS);
-		movePointer(listLS, currentTab->listHeader, false);
-	}
-	else if (currentTab->currentUrl->url == "chrome://bookmark")
-	{
-
-		drawHeaderAndTab();
-		listBookMark.tail->next = NULL;
-		viewBookMark = true;
-		drawList(listBookMark);
-		movePointer(listBookMark, currentTab->listHeader, false);
-	}
 	else
 	{
 		ascii_art(currentTab->currentUrl->url, xT, yT, t_color);
@@ -508,6 +491,23 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 					{
 						initTab();
 					}
+					else if (accumulator->url == "chrome://history")
+					{
+						addTail(currentTab->listUrl, createNode("chrome://history"));
+						currentTab->currentUrl = currentTab->listUrl.tail;
+						drawHeaderAndTab();
+						drawList(listLS);
+						movePointer(listLS, currentTab->listHeader, false);
+					}
+					else if (accumulator->url == "chrome://bookmark")
+					{
+						addTail(currentTab->listUrl, createNode("chrome://bookmark"));
+						currentTab->currentUrl = currentTab->listUrl.tail;
+						drawHeaderAndTab();
+						listBookMark.tail->next = NULL;
+						drawList(listBookMark);
+						movePointer(listBookMark, currentTab->listHeader, false);
+					}
 					else
 					{
 						if (viewHistory || viewBookMark)
@@ -520,6 +520,12 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 							if (accumulator->isBookMark == true)
 								listLS.tail->isBookMark = true;
 							currentTab->currentUrl = currentTab->currentUrl->next;
+							currentTab->currentHeader = currentTab->listHeader.head;
+							if (viewHistory)
+								viewHistory = false;
+							else
+								viewBookMark = false;
+							drawBrowser();
 						}
 						currentTab->currentHeader = currentTab->listHeader.head;
 						if (viewHistory)
@@ -577,15 +583,7 @@ void Header(listUrl &listHeader)
 	{
 		if (accumulator->x == positionX[3])
 		{
-			if (viewFavorite)
-			{
-				accumulator->url = "chrome://favourite";
-			}
-			else
-			{
-				
 				accumulator->url = currentTab->currentUrl->url;
-			}
 		}
 		box(accumulator, 1, textColor, true);
 		if (accumulator->x == positionX[4] && currentTab->currentUrl->isBookMark)
