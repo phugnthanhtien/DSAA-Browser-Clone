@@ -263,10 +263,12 @@ void drawBrowser()
 	{
 		if(currentTab->currentUrl->url == constant.history) {
 			drawList(listLS);
+			viewHistory = true;
 			movePointer(listLS, currentTab->listHeader, false);
 		}
 		else if(currentTab->currentUrl->url == constant.bookmark) {
 			drawList(listBookMark);
+			viewBookMark = true;
 			movePointer(listBookMark, currentTab->listHeader, false);
 		}
 		else {
