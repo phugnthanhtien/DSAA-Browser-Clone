@@ -241,8 +241,6 @@ void drawBrowser()
 	}
 	else if (viewBookMark)
 	{
-		if (listBookMark.tail != NULL)	
-			listBookMark.tail->next = NULL;
 		drawList(listBookMark);
 		movePointer(listBookMark, currentTab->listHeader, false);
 	}
@@ -262,13 +260,14 @@ void drawBrowser()
 	else
 	{
 		if(currentTab->currentUrl->url == constant.history) {
-			drawList(listLS);
 			viewHistory = true;
+			drawList(listLS);
 			movePointer(listLS, currentTab->listHeader, false);
 		}
 		else if(currentTab->currentUrl->url == constant.bookmark) {
-			drawList(listBookMark);
+			listBookMark.tail->next = NULL;
 			viewBookMark = true;
+			drawList(listBookMark);
 			movePointer(listBookMark, currentTab->listHeader, false);
 		}
 		else {
@@ -546,14 +545,14 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 							if (accumulator->isBookMark == true)
 								temp->isBookMark = true;
 							addAfter(currentTab->listUrl,temp, currentTab->currentUrl);
-							addTail(listLS, createNode(accumulator->url));
+							addTail(listLS,createNode(accumulator->url));
 							if (accumulator->isBookMark == true)
 								listLS.tail->isBookMark = true;
 							currentTab->currentUrl = currentTab->currentUrl->next;
 							currentTab->currentHeader = currentTab->listHeader.head;
 							if (viewHistory)
 								viewHistory = false;
-							else
+							else if(viewBookMark)
 								viewBookMark = false;
 							drawBrowser();
 						}
