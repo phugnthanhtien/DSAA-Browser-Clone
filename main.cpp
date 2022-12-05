@@ -210,7 +210,13 @@ void moveTab()
 				deleteTab(listTab, currentTab);
 				currentTab = temp;
 				if (!currentTab)
+				{
+					ghiFile(listLS, "url.txt");
+					ghiFile(listBookMark, "bookMark.txt");
+					// khi exit thi cua so nao se hien len?
+					system("cls");
 					Exit();
+				}
 				drawSquareTab(currentTab->currentUrl->url, currentTab->square.x, currentTab->square.y, true);
 				drawBrowser();
 			}
