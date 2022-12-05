@@ -241,6 +241,8 @@ void drawBrowser()
 	}
 	else if (viewBookMark)
 	{
+		if (listBookMark.tail != NULL)	
+			listBookMark.tail->next = NULL;
 		drawList(listBookMark);
 		movePointer(listBookMark, currentTab->listHeader, false);
 	}
