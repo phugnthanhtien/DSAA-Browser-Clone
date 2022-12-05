@@ -241,7 +241,8 @@ void drawBrowser()
 	}
 	else if (viewBookMark)
 	{
-		listBookMark.tail->next = NULL;
+		if (listBookMark.tail != NULL)	
+			listBookMark.tail->next = NULL;
 		drawList(listBookMark);
 		movePointer(listBookMark, currentTab->listHeader, false);
 	}
@@ -461,7 +462,7 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 							if (temp_Delete_url != NULL)
 							{
 								removeNode(listBookMark, temp_Delete_url);
-								temp_Delete_url = NULL;
+							//	temp_Delete_url = NULL;
 								drawBrowser();
 							}
 							else
@@ -554,11 +555,6 @@ void movePointer(listUrl &list, listUrl &listHeader, bool isCenter)
 								viewBookMark = false;
 							drawBrowser();
 						}
-						currentTab->currentHeader = currentTab->listHeader.head;
-						if (viewHistory)
-							viewHistory = false;
-						else
-							viewBookMark = false;
 					}
 					drawBrowser();
 				}
@@ -779,7 +775,6 @@ void moveHeader(T *accumulator, listUrl &listHeader)
 					else
 					{
 						findAndDelete(listBookMark, currentTab->currentUrl->url);
-						viewBookMark = true;
 					}
 				}
 				else if (accumulator->url == "X")
